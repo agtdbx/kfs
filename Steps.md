@@ -18,3 +18,6 @@ Now I can use the dev shell by doing this :
 ```bash
 nix develop
 ```
+
+## Create the linker amd bootloader
+
