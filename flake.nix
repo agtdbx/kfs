@@ -28,6 +28,7 @@
             pkgs.nasm # 'Compiler' for asm
             pkgs.gcc # C compiler
             pkgs.binutils # Linker ld
+            pkgs.xorriso #
           ];
 
           # Start my dev shell after install

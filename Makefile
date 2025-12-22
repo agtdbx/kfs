@@ -5,29 +5,33 @@ LINKER		:= ld
 ISO_MAKER	:= grub-mkrescue
 EMULATOR	:= qemu-system-i386
 FLAGS_ASM	:= -f elf32
-FLAGS_C		:= -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector\
+FLAGS_C		:= -c -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector\
 				-nostartfiles -nodefaultlibs
 FLAGS_LD	:= -m elf_i386
 
 #--- File paths ----------------------------------------------------------------
-SRC_BOOT_DIR	:= ./src/boot/
-BIN_DIR			:= ./.bin/
-KERNEL_BIN_DIR	:= ${BIN_DIR}boot/
-GRUB_CONF_DIR	:= ${BIN_DIR}boot/grub/
+SRC_DIR			:=	./src/
+SRC_BOOT_DIR	:=	${SRC_DIR}boot/
+SRC_KERNEL_DIR	:=	${SRC_DIR}kernel/
+BIN_DIR			:=	./.bin/
+KERNEL_BIN_DIR	:=	${BIN_DIR}boot/
+GRUB_CONF_DIR	:=	${BIN_DIR}boot/grub/
 
-FILE_LINKER		:= linker.ld
-FILE_BOOTLOADER	:= bootloader.asm
-KERNEL_BIN		:= kernel.bin
-GRUB_CONF_FILE	:= grub.cfg
-ISO_FILE		:= kfs.iso
+FILE_LINKER		:=	linker.ld
+FILE_BOOTLOADER	:=	bootloader.asm
+KERNEL_BIN		:=	kernel.bin
+GRUB_CONF_FILE	:=	grub.cfg
+ISO_FILE		:=	kfs.iso
+KERNEL_FILES	:=	main.c
 
-LINKER_PATH		:= ${SRC_BOOT_DIR}${FILE_LINKER}
-BOOTLOADER_PATH	:= ${SRC_BOOT_DIR}${FILE_BOOTLOADER}
-KERNEL_PATH		:= ${KERNEL_BIN_DIR}${KERNEL_BIN}
-GRUB_CONF_PATH	:= ${GRUB_CONF_DIR}${GRUB_CONF_FILE}
-ISO_PATH		:= ${BIN_DIR}${ISO_FILE}
+LINKER_PATH		:=	${SRC_BOOT_DIR}${FILE_LINKER}
+BOOTLOADER_PATH	:=	${SRC_BOOT_DIR}${FILE_BOOTLOADER}
+KERNEL_PATH		:=	${KERNEL_BIN_DIR}${KERNEL_BIN}
+GRUB_CONF_PATH	:=	${GRUB_CONF_DIR}${GRUB_CONF_FILE}
+ISO_PATH		:=	${BIN_DIR}${ISO_FILE}
 
-BOOTLOADER_OBJ	:= ${BIN_DIR}$(FILE_BOOTLOADER:.asm=.o)
+BOOTLOADER_OBJ	:=	${BIN_DIR}$(FILE_BOOTLOADER:%.asm=%.o)
+KERNEL_OBJS		:=	$(KERNEL_FILES:%.c=${BIN_DIR}%.o)
 
 
 #--- Rules --------------------------------------------------------------------
@@ -42,9 +46,11 @@ ${BOOTLOADER_OBJ}: ${GRUB_CONF_DIR}
 	${COMPILE_ASM} ${FLAGS_ASM} -o $@ ${BOOTLOADER_PATH}
 
 # TODO: Compile C kernel to .o
+${BIN_DIR}%.o: ${SRC_KERNEL_DIR}%.c
+	${COMPILE_C} ${FLAGS_C} -o $@ $<
 
 # Create the .bin of the kernel
-${KERNEL_PATH}: ${BOOTLOADER_OBJ}
+${KERNEL_PATH}: ${BOOTLOADER_OBJ} ${KERNEL_OBJS}
 	${LINKER} ${FLAGS_LD} -T ${LINKER_PATH} -o $@ $<
 
 # Create grub config file if not exist
