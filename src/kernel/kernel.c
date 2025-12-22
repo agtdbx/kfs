@@ -5,7 +5,7 @@
 
 void	kmain(void)
 {
-	const char *str = "42 kfs";
+	const char *str = "42 kfs\n\nYou can tell you impressed :)";
 	t_terminal	terminal = terminal_init(COLOR_LIGHT_GREY);
 
 	terminal_clear(&terminal);

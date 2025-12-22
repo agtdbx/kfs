@@ -3,7 +3,7 @@
 
 void	terminal_putchar(t_terminal *terminal, char c)
 {
-	uint	char_id = (terminal->cursor_x + terminal->cursor_y * TERMINAL_HEIGHT) * 2;
+	uint	char_id = (terminal->cursor_x + terminal->cursor_y * TERMINAL_WIDTH) * 2;
 
 	if (c == '\n')
 	{
