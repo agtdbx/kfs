@@ -4,6 +4,9 @@
 %define	FLAGS			0x00000003 ; Request page-aligned modules and memory info
 %define	CHECKSUM		-(MAGIC_NUMBER + FLAGS) ; Checksum for grub
 
+section .note.GNU-stack
+    ; Section to tell that the bootloader is executable
+
 section .multiboot ; Section for grub multiboot define
 align 4 ; Make sure that the header is well align
 	dd MAGIC_NUMBER
@@ -21,6 +24,4 @@ _start:
 	; Infinit loop for avoid crash
 	cli
 	hlt
-
-
 _sys_stack:

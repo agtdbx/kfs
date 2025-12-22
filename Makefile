@@ -22,7 +22,8 @@ FILE_BOOTLOADER	:=	bootloader.asm
 KERNEL_BIN		:=	kernel.bin
 GRUB_CONF_FILE	:=	grub.cfg
 ISO_FILE		:=	kfs.iso
-KERNEL_FILES	:=	kernel.c
+KERNEL_FILES	:=	kernel.c \
+					libstr.c
 
 LINKER_PATH		:=	${SRC_BOOT_DIR}${FILE_LINKER}
 BOOTLOADER_PATH	:=	${SRC_BOOT_DIR}${FILE_BOOTLOADER}

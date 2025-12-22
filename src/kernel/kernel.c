@@ -1,44 +1,57 @@
-# define TERMINAL_ADDR 0xb8000
-# define TERMINAL_WIDTH 80
-# define TERMINAL_HEIGHT 25
+#include "define.h"
+#include "colors.h"
+// #include "libstr.h"
 
-# define COLOR_LIGHT_GREY 0x07
+static uint strlen(const char *str)
+{
+	if (!str)
+		return (0);
 
-typedef unsigned int uint;
+	uint	len = 0;
 
+	while (str[len])
+		len++;
+
+	return (len);
+}
+
+static void	clear_terminal(void);
 static void	write_char(uint x, uint y, char c, char color);
+static void	write_string(uint x, uint y, const char *str, char color);
 
 void	kmain(void)
 {
 	const char *str = "42 kfs";
 	char *vidptr = (char*)0xb8000;  // Video memory address
-	uint i = 0;
-	uint j = 0;
 
 	// Clear the screen
-	while (j < 80 * 25 * 2) {
-		vidptr[j] = ' ';
-		vidptr[j+1] = 0x07; // Attribute-byte: light grey on black screen
-		j += 2;
-	}
+	clear_terminal();
 
 	// Write the string to video memory
-	j = 0;
-	while (str[j] != '\0') {
-		vidptr[i] = str[j];
-		vidptr[i+1] = 0x07;
-		++j;
-		i += 2;
-	}
+	write_string(0, 0, str, COLOR_LIGHT_GREY);
 
 	// Infinite loop to keep the kernel running
 	while (1) {}
 }
 
 
+static void	clear_terminal(void)
+{
+	uint	i = 0;
+	uint	terminal_end = TERMINAL_WIDTH * TERMINAL_HEIGHT * 2;
+	char	*terminal = TERMINAL_ADDR;
+
+	while (i < terminal_end) {
+		terminal[i] = ' ';
+		terminal[i+1] = COLOR_LIGHT_GREY;
+		i += 2;
+	}
+}
+
+
 static void	write_char(uint x, uint y, char c, char color)
 {
-	uint	char_id = x + y * TERMINAL_HEIGHT * 2;
+	uint	char_id = (x + y * TERMINAL_HEIGHT) * 2;
 	char	*terminal = TERMINAL_ADDR;
 
 	terminal[char_id] = c;
@@ -46,4 +59,25 @@ static void	write_char(uint x, uint y, char c, char color)
 }
 
 
-// static void	write_char(uint x, uint y, char c, char color)
+static void	write_string(uint x, uint y, const char *str, char color)
+{
+	uint	i = 0;
+	uint	len = strlen(str);
+
+	if (x >= TERMINAL_WIDTH || y >= TERMINAL_HEIGHT)
+		return ;
+
+	while (i < len)
+	{
+		write_char(x, y, str[i], color);
+		i++;
+		x++;
+		if (x == TERMINAL_WIDTH)
+		{
+			x = 0;
+			y++;
+			if (y == TERMINAL_HEIGHT)
+				return ;
+		}
+	}
+}
