@@ -22,7 +22,7 @@ FILE_BOOTLOADER	:=	bootloader.asm
 KERNEL_BIN		:=	kernel.bin
 GRUB_CONF_FILE	:=	grub.cfg
 ISO_FILE		:=	kfs.iso
-KERNEL_FILES	:=	main.c
+KERNEL_FILES	:=	kernel.c
 
 LINKER_PATH		:=	${SRC_BOOT_DIR}${FILE_LINKER}
 BOOTLOADER_PATH	:=	${SRC_BOOT_DIR}${FILE_BOOTLOADER}
@@ -51,7 +51,7 @@ ${BIN_DIR}%.o: ${SRC_KERNEL_DIR}%.c
 
 # Create the .bin of the kernel
 ${KERNEL_PATH}: ${BOOTLOADER_OBJ} ${KERNEL_OBJS}
-	${LINKER} ${FLAGS_LD} -T ${LINKER_PATH} -o $@ $<
+	${LINKER} ${FLAGS_LD} -T ${LINKER_PATH} -o $@ $^
 
 # Create grub config file if not exist
 ${GRUB_CONF_PATH}: ${GRUB_CONF_DIR}
@@ -73,5 +73,6 @@ re: fclean all
 run:
 	${EMULATOR} -cdrom ${ISO_PATH}
 
+rerun: re run
 
-.PHONY: fclean re run
+.PHONY: fclean re run rerun
