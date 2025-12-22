@@ -23,5 +23,9 @@ SECTIONS
 	. = 0x600000;
 	.bss : {
 		*(.bss)
+		/* Create the stack */
+		_sys_stack = .;
+		. += 0x1000; /* 4 Kb */
+		_sys_stack_top = .;
 	}
 }

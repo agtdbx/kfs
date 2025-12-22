@@ -1,3 +1,8 @@
+#--- Make flags ---------------------------------------------------------------
+MAKEFLAGS		:= --no-print-directory
+.DEFAULT_GOAL	:= all
+.SECONDEXPANSION:
+
 #--- Basic functions ----------------------------------------------------------
 COMPILE_ASM	:= nasm
 COMPILE_C	:= gcc
@@ -15,6 +20,7 @@ SRC_BOOT_DIR	:=	${SRC_DIR}boot/
 SRC_KERNEL_DIR	:=	${SRC_DIR}kernel/
 BIN_DIR			:=	./.bin/
 KERNEL_BIN_DIR	:=	${BIN_DIR}boot/
+KERNEL_OBJS_DIR	:=	${BIN_DIR}obj/
 GRUB_CONF_DIR	:=	${BIN_DIR}boot/grub/
 
 FILE_LINKER		:=	linker.ld
@@ -23,7 +29,9 @@ KERNEL_BIN		:=	kernel.bin
 GRUB_CONF_FILE	:=	grub.cfg
 ISO_FILE		:=	kfs.iso
 KERNEL_FILES	:=	kernel.c \
-					libstr.c
+					libs/libstr.c \
+					terminal/terminal.c \
+					terminal/write.c
 
 LINKER_PATH		:=	${SRC_BOOT_DIR}${FILE_LINKER}
 BOOTLOADER_PATH	:=	${SRC_BOOT_DIR}${FILE_BOOTLOADER}
@@ -32,8 +40,8 @@ GRUB_CONF_PATH	:=	${GRUB_CONF_DIR}${GRUB_CONF_FILE}
 ISO_PATH		:=	${BIN_DIR}${ISO_FILE}
 
 BOOTLOADER_OBJ	:=	${BIN_DIR}$(FILE_BOOTLOADER:%.asm=%.o)
-KERNEL_OBJS		:=	$(KERNEL_FILES:%.c=${BIN_DIR}%.o)
-
+KERNEL_OBJS		:=	$(KERNEL_FILES:%.c=${KERNEL_OBJS_DIR}%.o)
+KERNEL_DIRS		:= $(sort $(shell dirname $(KERNEL_OBJS)))
 
 #--- Rules --------------------------------------------------------------------
 all: ${ISO_PATH}
@@ -42,12 +50,15 @@ all: ${ISO_PATH}
 ${GRUB_CONF_DIR}:
 	mkdir -p ${GRUB_CONF_DIR}
 
+$(KERNEL_DIRS):
+	@mkdir -p $@
+
 # Compile asm to .o
-${BOOTLOADER_OBJ}: ${GRUB_CONF_DIR}
+${BOOTLOADER_OBJ}: ${BOOTLOADER_PATH} ${GRUB_CONF_DIR}
 	${COMPILE_ASM} ${FLAGS_ASM} -o $@ ${BOOTLOADER_PATH}
 
-# TODO: Compile C kernel to .o
-${BIN_DIR}%.o: ${SRC_KERNEL_DIR}%.c
+# Compile C kernel to .o
+${KERNEL_OBJS_DIR}%.o: ${SRC_KERNEL_DIR}%.c | $$(@D)
 	${COMPILE_C} ${FLAGS_C} -o $@ $<
 
 # Create the .bin of the kernel
@@ -56,12 +67,12 @@ ${KERNEL_PATH}: ${BOOTLOADER_OBJ} ${KERNEL_OBJS}
 
 # Create grub config file if not exist
 ${GRUB_CONF_PATH}: ${GRUB_CONF_DIR}
-	echo 'set timeout=5' >> $@
-	echo 'set default=0' >> $@
-	echo 'menuentry "Kfs" {' >> $@
-	echo '	multiboot /boot/kernel.bin' >> $@
-	echo '	boot' >> $@
-	echo '}' >> $@
+	@echo 'set timeout=5' >> $@
+	@echo 'set default=0' >> $@
+	@echo 'menuentry "Kfs" {' >> $@
+	@echo '	multiboot /boot/kernel.bin' >> $@
+	@echo '	boot' >> $@
+	@echo '}' >> $@
 
 ${ISO_PATH}: ${KERNEL_PATH} ${GRUB_CONF_PATH}
 	${ISO_MAKER} -o $@ ${BIN_DIR}

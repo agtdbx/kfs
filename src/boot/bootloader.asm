@@ -15,13 +15,13 @@ align 4 ; Make sure that the header is well align
 
 section .text ; Section for code location
 global _start ;
+extern _sys_stack_top
 _start:
 	; Define stack
-	mov esp, _sys_stack
+	mov esp, _sys_stack_top
 	; Kernel main call
 	extern kmain
 	call kmain
 	; Infinit loop for avoid crash
 	cli
 	hlt
-_sys_stack:
