@@ -3,6 +3,6 @@
 
 # include "../define.h"
 
-uint strlen(const char *str);
+uint	strlen(const char *str);
 
 #endif

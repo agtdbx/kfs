@@ -31,7 +31,7 @@ void	terminal_scroll_up(t_terminal *terminal)
 	uint	i = 0;
 	uint	next_shift = TERMINAL_WIDTH * 2;
 	uint	terminal_last_line = TERMINAL_WIDTH * (TERMINAL_HEIGHT - 1) * 2;
-	uint	terminal_size = TERMINAL_WIDTH * (TERMINAL_HEIGHT - 1) * 2;
+	uint	terminal_size = TERMINAL_WIDTH * (TERMINAL_HEIGHT) * 2;
 
 	while (i < terminal_last_line) {
 		terminal->addr[i] = terminal->addr[i + next_shift];

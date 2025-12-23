@@ -29,9 +29,11 @@ KERNEL_BIN		:=	kernel.bin
 GRUB_CONF_FILE	:=	grub.cfg
 ISO_FILE		:=	kfs.iso
 KERNEL_FILES	:=	kernel.c \
+					libs/libasm.c \
 					libs/libstr.c \
+					terminal/write.c \
+					terminal/cursor.c \
 					terminal/terminal.c \
-					terminal/write.c
 
 LINKER_PATH		:=	${SRC_BOOT_DIR}${FILE_LINKER}
 BOOTLOADER_PATH	:=	${SRC_BOOT_DIR}${FILE_BOOTLOADER}

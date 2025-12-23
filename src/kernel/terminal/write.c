@@ -1,7 +1,27 @@
 #include "terminal.h"
 #include "../libs/libstr.h"
 
-void	terminal_putchar(t_terminal *terminal, char c)
+static void	_putchar(t_terminal *terminal, const char c);
+
+void	terminal_putchar(t_terminal *terminal, const char c)
+{
+	_putchar(terminal, c);
+	_update_cursor_pos(terminal->cursor_x, terminal->cursor_y);
+}
+
+
+void	terminal_putstring(t_terminal *terminal, const char *str)
+{
+	uint	len = strlen(str);
+
+	for (uint i = 0; i < len; i++)
+		_putchar(terminal, str[i]);
+	_update_cursor_pos(terminal->cursor_x, terminal->cursor_y);
+}
+
+
+
+static void	_putchar(t_terminal *terminal, const char c)
 {
 	uint	char_id = (terminal->cursor_x + terminal->cursor_y * TERMINAL_WIDTH) * 2;
 
@@ -28,14 +48,3 @@ void	terminal_putchar(t_terminal *terminal, char c)
 		terminal_scroll_up(terminal);
 	}
 }
-
-
-void	terminal_putstring(t_terminal *terminal, char *str)
-{
-	uint	len = strlen(str);
-
-	for (uint i = 0; i < len; i++)
-		terminal_putchar(terminal, str[i]);
-}
-
-
