@@ -2,6 +2,7 @@
 #include "colors.h"
 #include "libs/libstr.h"
 #include "terminal/terminal.h"
+#include "inputs/keyboard.h"
 
 void	kmain(void)
 {
@@ -18,6 +19,13 @@ void	kmain(void)
 	terminal_putstring(&terminal, "test-abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcde !");
 
 	// Infinite loop to keep the kernel running
-	while (1) {}
+	uint8_t	scancode = 0;
+	while (1) {
+		if (keyboard_poll(&scancode))
+		{
+			if ((scancode & KEY_UP_MASK) != KEY_UP_MASK)
+				terminal_putchar(&terminal, scancode_to_char(scancode));
+		}
+	}
 }
 

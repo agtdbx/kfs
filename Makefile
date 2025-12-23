@@ -34,6 +34,7 @@ KERNEL_FILES	:=	kernel.c \
 					terminal/write.c \
 					terminal/cursor.c \
 					terminal/terminal.c \
+					inputs/keyboard.c \
 
 LINKER_PATH		:=	${SRC_BOOT_DIR}${FILE_LINKER}
 BOOTLOADER_PATH	:=	${SRC_BOOT_DIR}${FILE_BOOTLOADER}

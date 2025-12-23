@@ -30,6 +30,12 @@ static void	_putchar(t_terminal *terminal, const char c)
 		terminal->cursor_y++;
 		terminal->cursor_x = 0;
 	}
+	else if (c == '\t')
+	{
+		terminal->addr[char_id] = ' ';
+		terminal->addr[char_id + 1] = terminal->current_color;
+		terminal->cursor_x++;
+	}
 	else
 	{
 		terminal->addr[char_id] = c;
