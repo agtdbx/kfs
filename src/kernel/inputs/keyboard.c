@@ -28,22 +28,57 @@ static char keymap_us[128] = {
 };
 
 
-uint8_t	keyboard_poll(uint8_t* sc)
+t_keyboard	keyboard_init(void)
+{
+	t_keyboard	keyboard;
+
+	keyboard.caps_lock = false;
+	keyboard.num_lock = false;
+	keyboard.shiftL = false;
+	keyboard.shiftR = false;
+	keyboard.ctrlL = false;
+	keyboard.ctrlR = false;
+	keyboard.altL = false;
+	keyboard.altR = false;
+	keyboard.super = false;
+
+	return (keyboard);
+}
+
+
+
+bool	keyboard_poll(t_keyboard *keyboard, t_key_event *key_event)
 {
 	uint8_t status = inb(PS2_STATUS); // Read keyboard status
 
 	// Check if there is data
 	if (!(status & 0x01))
-		return 0; // If no data, return 0
+		return (false); // If no data, return false
 
-	*sc = inb(PS2_DATA); // If data, read the data
-	return 1; // There return 1
+	// If data, read the data
+	key_event->scancode = inb(PS2_DATA);
+
+	// Check the type of the event
+	if ((key_event->scancode & KEY_UP_MASK) == KEY_UP_MASK)
+		key_event->type = KEY_RELEASE;
+	else
+		key_event->type = KEY_PRESS;
+
+	// Compute the key from the scancode
+	key_event->key = K_F;
+
+	// Compute the ascii of the key
+	key_event->ascii = 'f';
+
+	// Update the keyboard state
+
+	return true; // Return true to tell that there is a key event
 }
 
 
-char	scancode_to_char(uint8_t scancode)
-{
-	if (scancode > 0x53)
-		return (' ');
-	return keymap_us[scancode];
-}
+// char	scancode_to_char(uint8_t scancode)
+// {
+// 	if (scancode > 0x53)
+// 		return (' ');
+// 	return keymap_us[scancode];
+// }
