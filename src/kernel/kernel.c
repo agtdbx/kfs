@@ -13,7 +13,7 @@ void	kmain(void)
 
 	terminal_clear(&terminal);
 
-	// Write the string to video memory
+	// // Write the string to video memory
 	terminal_putstring(&terminal, str);
 
 	// Infinite loop to keep the kernel running

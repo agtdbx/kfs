@@ -51,25 +51,29 @@ all: ${ISO_PATH}
 
 # Create directory if not exist
 ${GRUB_CONF_DIR}:
-	mkdir -p ${GRUB_CONF_DIR}
+	@mkdir -p $@
 
 $(KERNEL_DIRS):
 	@mkdir -p $@
 
 # Compile asm to .o
 ${BOOTLOADER_OBJ}: ${BOOTLOADER_PATH} ${GRUB_CONF_DIR}
-	${COMPILE_ASM} ${FLAGS_ASM} -o $@ ${BOOTLOADER_PATH}
+	@echo "Compile $< to $@"
+	@${COMPILE_ASM} ${FLAGS_ASM} -o $@ ${BOOTLOADER_PATH}
 
 # Compile C kernel to .o
 ${KERNEL_OBJS_DIR}%.o: ${SRC_KERNEL_DIR}%.c | $$(@D)
-	${COMPILE_C} ${FLAGS_C} -o $@ $<
+	@echo "Compile $< to $@"
+	@${COMPILE_C} ${FLAGS_C} -o $@ $<
 
 # Create the .bin of the kernel
 ${KERNEL_PATH}: ${BOOTLOADER_OBJ} ${KERNEL_OBJS}
-	${LINKER} ${FLAGS_LD} -T ${LINKER_PATH} -o $@ $^
+	@echo "Link binaries to ${LINKER_PATH}"
+	@${LINKER} ${FLAGS_LD} -T ${LINKER_PATH} -o $@ $^
 
 # Create grub config file if not exist
 ${GRUB_CONF_PATH}: ${GRUB_CONF_DIR}
+	@echo "Create grub conf file ${GRUB_CONF_DIR}"
 	@echo 'set timeout=5' >> $@
 	@echo 'set default=0' >> $@
 	@echo 'menuentry "Kfs" {' >> $@
@@ -78,15 +82,18 @@ ${GRUB_CONF_PATH}: ${GRUB_CONF_DIR}
 	@echo '}' >> $@
 
 ${ISO_PATH}: ${KERNEL_PATH} ${GRUB_CONF_PATH}
-	${ISO_MAKER} -o $@ ${BIN_DIR}
+	@echo "Create the .iso"
+	@${ISO_MAKER} -o $@ ${BIN_DIR}
 
 fclean:
-	rm -rf ${BIN_DIR}
+	@echo "Remove all compiled files !"
+	@rm -rf ${BIN_DIR}
 
 re: fclean all
 
 run:
-	${EMULATOR} -cdrom ${ISO_PATH}
+	@echo "Os starting !"
+	@${EMULATOR} -cdrom ${ISO_PATH}
 
 rerun: re run
 

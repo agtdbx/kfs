@@ -37,8 +37,6 @@ typedef struct s_keyboard
 // Keyboard functions
 t_keyboard	keyboard_init(void);
 
-// void	keyboard_poll()
-
 bool	keyboard_poll(t_keyboard *keyboard, t_key_event *key_event);
 
 // char	scancode_to_char(uint8_t scancode);

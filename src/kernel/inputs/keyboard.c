@@ -32,8 +32,9 @@ t_keyboard	keyboard_init(void)
 {
 	t_keyboard	keyboard;
 
+	// TODO: PATCH MEMORY PROBLEM
 	keyboard.caps_lock = false;
-	keyboard.num_lock = false;
+	// keyboard.num_lock = false;
 	keyboard.shiftL = false;
 	keyboard.shiftR = false;
 	keyboard.ctrlL = false;
