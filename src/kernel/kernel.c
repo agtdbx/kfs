@@ -20,9 +20,19 @@ void	kmain(void)
 	while (1) {
 		if (keyboard_poll(&keyboard, &key_event))
 		{
-			if (key_event.type == KEY_PRESS && key_event.ascii != '\0')
-				terminal_putchar(&terminal, key_event.ascii);
+			if (key_event.type == KEY_PRESS)
+			{
+				if (key_event.ascii != '\0')
+					terminal_putchar(&terminal, key_event.ascii);
+				else if (key_event.key == K_ENTER)
+					terminal_putchar(&terminal, '\n');
+				else if (key_event.key == K_TAB)
+					terminal_putchar(&terminal, '\t');
+				else if (key_event.key == K_BACKSPACE)
+					terminal_putchar(&terminal, '\b');
+			}
 		}
 	}
 }
+
 

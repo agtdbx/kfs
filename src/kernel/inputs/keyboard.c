@@ -1,33 +1,8 @@
 #include "keyboard.h"
 #include "../libs/libasm.h"
 
-static char keymap_us[128] = {
-	[0x01] = 0, // ESC (non-printable here)
-	[0x02] = '1', [0x03] = '2', [0x04] = '3', [0x05] = '4', [0x06] = '5',
-	[0x07] = '6', [0x08] = '7', [0x09] = '8', [0x0A] = '9', [0x0B] = '0',
-	[0x0C] = '-', [0x0D] = '=',
-	[0x0E] = 8, // Backspace
-	[0x0F] = '\t', // Tab
-	[0x10] = 'q', [0x11] = 'w', [0x12] = 'e', [0x13] = 'r', [0x14] = 't',
-	[0x15] = 'y', [0x16] = 'u', [0x17] = 'i', [0x18] = 'o', [0x19] = 'p',
-	[0x1A] = '[', [0x1B] = ']',
-	[0x1C] = '\n', // Enter
-	[0x1E] = 'a', [0x1F] = 's', [0x20] = 'd', [0x21] = 'f', [0x22] = 'g',
-	[0x23] = 'h', [0x24] = 'j', [0x25] = 'k', [0x26] = 'l',
-	[0x27] = ';', [0x28] = '\'', [0x29] = '`',
-	[0x2C] = 'z', [0x2D] = 'x', [0x2E] = 'c', [0x2F] = 'v', [0x30] = 'b',
-	[0x31] = 'n', [0x32] = 'm',
-	[0x33] = ',', [0x34] = '.', [0x35] = '/',
-	[0x39] = ' ', // Space
-
-	// Keypad (when NumLock on and no E0)
-	[0x4F] = '1', [0x50] = '2', [0x51] = '3',
-	[0x4B] = '4', [0x4C] = '5', [0x4D] = '6',
-	[0x47] = '7', [0x48] = '8', [0x49] = '9',
-	[0x52] = '0', [0x53] = '.', // keypad '.' (decimal)
-};
-
-static char	key_to_char(t_key key);
+static char		key_to_char(t_key key, bool uppercase);
+static t_key	scancode_to_key(uint8_t scancode);
 
 t_keyboard	keyboard_init(void)
 {
@@ -35,13 +10,14 @@ t_keyboard	keyboard_init(void)
 
 	keyboard.caps_lock = false;
 	keyboard.num_lock = false;
-	keyboard.shiftL = false;
-	keyboard.shiftR = false;
-	keyboard.ctrlL = false;
-	keyboard.ctrlR = false;
-	keyboard.altL = false;
-	keyboard.altR = false;
+	keyboard.Lshift = false;
+	keyboard.Rshift = false;
+	keyboard.Lctrl = false;
+	keyboard.Rctrl = false;
+	keyboard.Lalt = false;
+	keyboard.Ralt = false;
 	keyboard.super = false;
+	keyboard.uppercase = false;
 
 	return (keyboard);
 }
@@ -65,26 +41,68 @@ bool	keyboard_poll(t_keyboard *keyboard, t_key_event *key_event)
 		key_event->type = KEY_PRESS;
 
 	// Compute the key from the scancode
-	key_event->key = K_F;
+	key_event->key = scancode_to_key(key_event->scancode);
 
 	// Compute the ascii of the key
-	key_event->ascii = key_to_char(key_event->key);
+	key_event->ascii = key_to_char(key_event->key, keyboard->uppercase);
 
 	// Update the keyboard state
+	if (key_event->ascii == '\0')
+	{
+		if (key_event->key == K_CAPS_LOCK)
+		{
+			if (key_event->type)
+			{
+				keyboard->caps_lock = ~keyboard->caps_lock;
+				keyboard->uppercase = keyboard->Lshift || keyboard->Rshift || keyboard->caps_lock;
+			}
+		}
+		else if (key_event->key == K_NUM_LOCK)
+			keyboard->num_lock = key_event->type;
+		else if (key_event->key == K_LSHIFT)
+		{
+			keyboard->Lshift = key_event->type;
+			keyboard->uppercase = keyboard->Lshift || keyboard->Rshift || keyboard->caps_lock;
+		}
+		else if (key_event->key == K_RSHIFT)
+		{
+			keyboard->Rshift = key_event->type;
+			keyboard->uppercase = keyboard->Lshift || keyboard->Rshift || keyboard->caps_lock;
+		}
+		else if (key_event->key == K_LCTRL)
+			keyboard->Lctrl = key_event->type;
+		else if (key_event->key == K_RCTRL)
+			keyboard->Rctrl = key_event->type;
+		else if (key_event->key == K_LALT)
+			keyboard->Lalt = key_event->type;
+		else if (key_event->key == K_RALT)
+			keyboard->Ralt = key_event->type;
+		else if (key_event->key == K_SUPER)
+			keyboard->super = key_event->type;
+	}
 
 	return (true); // Return true to tell that there is a key event
 }
 
 
-// char	scancode_to_char(uint8_t scancode)
-// {
-// 	if (scancode > 0x53)
-// 		return (' ');
-// 	return keymap_us[scancode];
-// }
-
-
-static char	key_to_char(t_key key)
+static t_key	scancode_to_key(uint8_t scancode)
 {
-	return ('f');
+	if (scancode > 0x80) // Skip
+		scancode -= 0x80;
+	if (scancode > 0x58) // Skip
+		return (K_NONE);
+	return (scancode_key[scancode]);
+}
+
+
+static char	key_to_char(t_key key, bool uppercase)
+{
+	// Check if printable
+	if (K_A <= key && key <= K_KP_9)
+	{
+		if (uppercase)
+			return (printable_uppercase[key - K_A]);
+		return (printable_lowercase[key - K_A]);
+	}
+	return ('\0');
 }

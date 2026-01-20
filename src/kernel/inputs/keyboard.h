@@ -10,8 +10,8 @@
 
 typedef enum s_key_action
 {
-	KEY_PRESS,
-	KEY_RELEASE
+	KEY_RELEASE,
+	KEY_PRESS
 }	t_key_action;
 
 typedef struct s_key_event
@@ -27,10 +27,11 @@ typedef struct s_keyboard
 {
 	bool	caps_lock;
 	bool	num_lock;
-	bool	shiftL, shiftR;
-	bool	ctrlL, ctrlR;
-	bool	altL, altR;
+	bool	Lshift, Rshift;
+	bool	Lctrl, Rctrl;
+	bool	Lalt, Ralt;
 	bool	super;
+	bool	uppercase;
 }	t_keyboard;
 
 
