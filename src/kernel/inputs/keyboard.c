@@ -33,16 +33,15 @@ t_keyboard	keyboard_init(void)
 {
 	t_keyboard	keyboard; // = {0} crash
 
-	// TODO: PATCH MEMORY PROBLEM
-	// keyboard.caps_lock = false; // crash
-	// keyboard.num_lock = false; // crash
-	// keyboard.shiftL = false; // crash
-	// keyboard.shiftR = false; // crash
-	// keyboard.ctrlL = false; // crash
-	// keyboard.ctrlR = false; // crash
-	// keyboard.altL = false; // crash
-	// keyboard.altR = false; // crash
-	keyboard.super = false; // ok
+	keyboard.caps_lock = false;
+	keyboard.num_lock = false;
+	keyboard.shiftL = false;
+	keyboard.shiftR = false;
+	keyboard.ctrlL = false;
+	keyboard.ctrlR = false;
+	keyboard.altL = false;
+	keyboard.altR = false;
+	keyboard.super = false;
 
 	return (keyboard);
 }

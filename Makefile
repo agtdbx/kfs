@@ -5,7 +5,7 @@ MAKEFLAGS		:= --no-print-directory
 
 #--- Basic functions ----------------------------------------------------------
 COMPILE_ASM	:= nasm
-COMPILE_C	:= gcc
+COMPILE_C	:= i686-elf-gcc
 LINKER		:= ld
 ISO_MAKER	:= grub-mkrescue
 EMULATOR	:= qemu-system-i386
