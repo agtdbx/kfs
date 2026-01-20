@@ -25,12 +25,12 @@ typedef struct s_key_event
 
 typedef struct s_keyboard
 {
-	bool		caps_lock;
-	bool		num_lock;
-	bool		shiftL, shiftR;
-	bool		ctrlL, ctrlR;
-	bool		altL, altR;
-	bool		super;
+	bool	caps_lock;
+	bool	num_lock;
+	bool	shiftL, shiftR;
+	bool	ctrlL, ctrlR;
+	bool	altL, altR;
+	bool	super;
 }	t_keyboard;
 
 

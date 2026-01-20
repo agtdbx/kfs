@@ -10,7 +10,7 @@ LINKER		:= ld
 ISO_MAKER	:= grub-mkrescue
 EMULATOR	:= qemu-system-i386
 FLAGS_ASM	:= -f elf32
-FLAGS_C		:= -c -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector\
+FLAGS_C		:= -c -std=c17 -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector\
 				-nostartfiles -nodefaultlibs
 FLAGS_LD	:= -m elf_i386
 
@@ -97,4 +97,4 @@ run:
 
 rerun: re run
 
-.PHONY: fclean re run rerun
+.PHONY: fclean re run rerun all

@@ -25,16 +25,19 @@ static void	_putchar(t_terminal *terminal, const char c)
 {
 	uint	char_id = (terminal->cursor_x + terminal->cursor_y * TERMINAL_WIDTH) * 2;
 
-	if (c == '\n')
+	if (c == '\t')
 	{
-		terminal->cursor_y++;
-		terminal->cursor_x = 0;
-	}
-	else if (c == '\t')
-	{
-		terminal->addr[char_id] = ' ';
-		terminal->addr[char_id + 1] = terminal->current_color;
-		terminal->cursor_x++;
+		int nb_space = 4 - (terminal->cursor_x % 4);
+
+		for (int i = 0; i < nb_space; i++)
+		{
+			terminal->addr[char_id] = ' ';
+			terminal->addr[char_id + 1] = terminal->current_color;
+			terminal->cursor_x++;
+			if (terminal->cursor_x = TERMINAL_WIDTH)
+				break;
+			char_id = (terminal->cursor_x + terminal->cursor_y * TERMINAL_WIDTH) * 2;
+		}
 	}
 	else
 	{
@@ -43,7 +46,7 @@ static void	_putchar(t_terminal *terminal, const char c)
 		terminal->cursor_x++;
 	}
 
-	if (terminal->cursor_x == TERMINAL_WIDTH)
+	if (terminal->cursor_x == TERMINAL_WIDTH || c == '\n')
 	{
 		terminal->cursor_x = 0;
 		terminal->cursor_y++;

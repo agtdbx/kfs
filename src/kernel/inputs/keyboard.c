@@ -27,25 +27,25 @@ static char keymap_us[128] = {
 	[0x52] = '0', [0x53] = '.', // keypad '.' (decimal)
 };
 
+static char	key_to_char(t_key key);
 
 t_keyboard	keyboard_init(void)
 {
-	t_keyboard	keyboard;
+	t_keyboard	keyboard; // = {0} crash
 
 	// TODO: PATCH MEMORY PROBLEM
-	keyboard.caps_lock = false;
-	// keyboard.num_lock = false;
-	keyboard.shiftL = false;
-	keyboard.shiftR = false;
-	keyboard.ctrlL = false;
-	keyboard.ctrlR = false;
-	keyboard.altL = false;
-	keyboard.altR = false;
-	keyboard.super = false;
+	// keyboard.caps_lock = false; // crash
+	// keyboard.num_lock = false; // crash
+	// keyboard.shiftL = false; // crash
+	// keyboard.shiftR = false; // crash
+	// keyboard.ctrlL = false; // crash
+	// keyboard.ctrlR = false; // crash
+	// keyboard.altL = false; // crash
+	// keyboard.altR = false; // crash
+	keyboard.super = false; // ok
 
 	return (keyboard);
 }
-
 
 
 bool	keyboard_poll(t_keyboard *keyboard, t_key_event *key_event)
@@ -69,11 +69,11 @@ bool	keyboard_poll(t_keyboard *keyboard, t_key_event *key_event)
 	key_event->key = K_F;
 
 	// Compute the ascii of the key
-	key_event->ascii = 'f';
+	key_event->ascii = key_to_char(key_event->key);
 
 	// Update the keyboard state
 
-	return true; // Return true to tell that there is a key event
+	return (true); // Return true to tell that there is a key event
 }
 
 
@@ -83,3 +83,9 @@ bool	keyboard_poll(t_keyboard *keyboard, t_key_event *key_event)
 // 		return (' ');
 // 	return keymap_us[scancode];
 // }
+
+
+static char	key_to_char(t_key key)
+{
+	return ('f');
+}
