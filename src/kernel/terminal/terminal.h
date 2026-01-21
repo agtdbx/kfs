@@ -10,8 +10,8 @@
 typedef struct s_terminal
 {
 	char	*addr;
-	uint	cursor_x;
-	uint	cursor_y;
+	uint32_t	cursor_x;
+	uint32_t	cursor_y;
 	char	current_color;
 }	t_terminal;
 
@@ -27,8 +27,8 @@ void	terminal_putchar(t_terminal *terminal, const char c);
 void	terminal_putstring(t_terminal *terminal, const char *str);
 
 // Cursor functions
-void	ternimal_set_cursor(t_terminal *terminal, uint x, uint y);
-void	_update_cursor_pos(uint x, uint y);
+void	ternimal_set_cursor(t_terminal *terminal, uint32_t x, uint32_t y);
+void	_update_cursor_pos(uint32_t x, uint32_t y);
 
 
 #endif

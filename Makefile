@@ -29,7 +29,7 @@ KERNEL_BIN		:=	kernel.bin
 GRUB_CONF_FILE	:=	grub.cfg
 ISO_FILE		:=	kfs.iso
 KERNEL_FILES	:=	kernel.c \
-					libs/libasm.c \
+					libs/io.c \
 					libs/libstr.c \
 					terminal/write.c \
 					terminal/cursor.c \

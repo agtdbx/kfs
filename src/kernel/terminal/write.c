@@ -12,9 +12,9 @@ void	terminal_putchar(t_terminal *terminal, const char c)
 
 void	terminal_putstring(t_terminal *terminal, const char *str)
 {
-	uint	len = strlen(str);
+	uint32_t	len = strlen(str);
 
-	for (uint i = 0; i < len; i++)
+	for (uint32_t i = 0; i < len; i++)
 		_putchar(terminal, str[i]);
 	_update_cursor_pos(terminal->cursor_x, terminal->cursor_y);
 }
@@ -23,7 +23,7 @@ void	terminal_putstring(t_terminal *terminal, const char *str)
 
 static void	_putchar(t_terminal *terminal, const char c)
 {
-	uint	char_id = (terminal->cursor_x + terminal->cursor_y * TERMINAL_WIDTH) * 2;
+	uint32_t	char_id = (terminal->cursor_x + terminal->cursor_y * TERMINAL_WIDTH) * 2;
 
 	if (c == '\b')
 	{
@@ -37,9 +37,9 @@ static void	_putchar(t_terminal *terminal, const char c)
 	}
 	else if (c == '\t')
 	{
-		int nb_space = 4 - (terminal->cursor_x % 4);
+		int32_t nb_space = 4 - (terminal->cursor_x % 4);
 
-		for (int i = 0; i < nb_space; i++)
+		for (int32_t i = 0; i < nb_space; i++)
 		{
 			terminal->addr[char_id] = ' ';
 			terminal->addr[char_id + 1] = terminal->current_color;

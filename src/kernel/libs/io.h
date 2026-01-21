@@ -1,5 +1,5 @@
-#ifndef LIBASM_H
-# define LIBASM_H
+#ifndef IO_H
+# define IO_H
 
 # include "../define.h"
 

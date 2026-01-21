@@ -1,12 +1,18 @@
 #ifndef DEFINE_H
 # define DEFINE_H
 
+// Bool
 typedef enum e_bool {
     false = 0,
     true = 1
 }   bool;
-typedef unsigned int uint;
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
+
+// Basic types
+typedef unsigned char   uint8_t;
+typedef unsigned short  uint16_t;
+typedef unsigned int    uint32_t;
+typedef char            int8_t;
+typedef short           int16_t;
+typedef int             int32_t;
 
 #endif

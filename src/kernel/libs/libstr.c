@@ -1,11 +1,11 @@
 #include "libstr.h"
 
-uint strlen(const char *str)
+uint32_t strlen(const char *str)
 {
 	if (!str)
 		return (0);
 
-	uint	len = 0;
+	uint32_t	len = 0;
 
 	while (str[len])
 		len++;

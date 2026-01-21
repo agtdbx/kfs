@@ -27,6 +27,7 @@
             pkgs.unzip # Unzip
             pkgs.nasm # 'Compiler' for asm
             pkgs.gcc # C compiler
+            # pkgs.pkgsCross.i686-embedded.buildPackages.gcc # C compiler (take a lot of time)
             pkgs.binutils # Linker ld
             pkgs.xorriso
           ];

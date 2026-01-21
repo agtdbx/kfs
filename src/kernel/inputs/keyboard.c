@@ -1,12 +1,12 @@
 #include "keyboard.h"
-#include "../libs/libasm.h"
+#include "../libs/io.h"
 
 static char		key_to_char(t_key key, bool uppercase);
 static t_key	scancode_to_key(uint8_t scancode);
 
 t_keyboard	keyboard_init(void)
 {
-	t_keyboard	keyboard; // = {0} crash
+	t_keyboard	keyboard;
 
 	keyboard.caps_lock = false;
 	keyboard.num_lock = false;
