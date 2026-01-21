@@ -77,15 +77,107 @@ static const char	*printable_lowercase = ""
 "abcdefghijklmnopqrstuvwxyz"
 "1234567890"
 "`-=[]\\;',./ "
-"0123456789";
+"0123456789+-*/.";
 
 static const char	*printable_uppercase = ""
 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 "!@#$%^&*()"
 "~_+{}|:\"<>? "
-"0123456789";
+"0123456789+-*/.";
 
-static const t_key	scancode_key[] = {
+static const t_key	scancode_key_num_unlock[] = {
+	K_NONE,
+	K_ESCAPE,
+	K_1,
+	K_2,
+	K_3,
+	K_4,
+	K_5,
+	K_6,
+	K_7,
+	K_8,
+	K_9,
+	K_NONE,
+	K_MINUS,
+	K_EQUAL,
+	K_BACKSPACE,
+	K_TAB,
+	K_Q,
+	K_W,
+	K_E,
+	K_R,
+	K_T,
+	K_Y,
+	K_U,
+	K_I,
+	K_O,
+	K_P,
+	K_LBRACKET,
+	K_RBRACKET,
+	K_ENTER,
+	K_LCTRL,
+	K_A,
+	K_S,
+	K_D,
+	K_F,
+	K_G,
+	K_H,
+	K_J,
+	K_K,
+	K_L,
+	K_SEMICOLON,
+	K_APOSTROPHE,
+	K_BACKTICK,
+	K_LSHIFT,
+	K_BACKSLASH,
+	K_Z,
+	K_X,
+	K_C,
+	K_V,
+	K_B,
+	K_N,
+	K_M,
+	K_COMMA,
+	K_DOT,
+	K_SLASH,
+	K_RSHIFT,
+	K_KP_MULTIPLY,
+	K_LALT,
+	K_SPACE,
+	K_CAPS_LOCK,
+	K_F1,
+	K_F2,
+	K_F3,
+	K_F4,
+	K_F5,
+	K_F6,
+	K_F7,
+	K_F8,
+	K_F9,
+	K_F10,
+	K_NUM_LOCK,
+	K_SCROLL_LOCK,
+	K_HOME,
+	K_UP,
+	K_PAGE_UP,
+	K_KP_SUBSTRACT,
+	K_LEFT,
+	K_NONE,
+	K_RIGHT,
+	K_KP_ADD,
+	K_END,
+	K_DOWN,
+	K_PAGE_DOWN,
+	K_INSERT,
+	K_DELETE,
+	K_NONE,
+	K_NONE,
+	K_NONE,
+	K_F11,
+	K_F12
+};
+
+static const t_key	scancode_key_num_lock[] = {
 	K_NONE,
 	K_ESCAPE,
 	K_1,
@@ -176,6 +268,5 @@ static const t_key	scancode_key[] = {
 	K_F11,
 	K_F12
 };
-
 
 #endif

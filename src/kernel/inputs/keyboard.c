@@ -1,8 +1,8 @@
 #include "keyboard.h"
 #include "../libs/io.h"
 
+static t_key	scancode_to_key(uint8_t scancode, bool num_lock);
 static char		key_to_char(t_key key, bool uppercase);
-static t_key	scancode_to_key(uint8_t scancode);
 
 t_keyboard	keyboard_init(void)
 {
@@ -41,7 +41,7 @@ bool	keyboard_poll(t_keyboard *keyboard, t_key_event *key_event)
 		key_event->type = KEY_PRESS;
 
 	// Compute the key from the scancode
-	key_event->key = scancode_to_key(key_event->scancode);
+	key_event->key = scancode_to_key(key_event->scancode, keyboard->num_lock);
 
 	// Compute the ascii of the key
 	key_event->ascii = key_to_char(key_event->key, keyboard->uppercase);
@@ -58,7 +58,10 @@ bool	keyboard_poll(t_keyboard *keyboard, t_key_event *key_event)
 			}
 		}
 		else if (key_event->key == K_NUM_LOCK)
-			keyboard->num_lock = key_event->type;
+		{
+			if (key_event->type)
+				keyboard->num_lock = ~keyboard->num_lock;
+		}
 		else if (key_event->key == K_LSHIFT)
 		{
 			keyboard->Lshift = key_event->type;
@@ -85,20 +88,24 @@ bool	keyboard_poll(t_keyboard *keyboard, t_key_event *key_event)
 }
 
 
-static t_key	scancode_to_key(uint8_t scancode)
+static t_key	scancode_to_key(uint8_t scancode, bool num_lock)
 {
-	if (scancode > 0x80) // Skip
+	if (scancode > 0x80) // Remove diff from press/release
 		scancode -= 0x80;
-	if (scancode > 0x58) // Skip
+
+	if (scancode > 0x58) // Security
 		return (K_NONE);
-	return (scancode_key[scancode]);
+
+	if (num_lock)
+		return (scancode_key_num_lock[scancode]);
+	return (scancode_key_num_unlock[scancode]);
 }
 
 
 static char	key_to_char(t_key key, bool uppercase)
 {
 	// Check if printable
-	if (K_A <= key && key <= K_KP_9)
+	if (K_A <= key && key <= K_KP_DOT)
 	{
 		if (uppercase)
 			return (printable_uppercase[key - K_A]);
