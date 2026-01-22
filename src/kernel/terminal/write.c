@@ -6,7 +6,7 @@ static void	_putchar(t_terminal *terminal, const char c);
 void	terminal_putchar(t_terminal *terminal, const char c)
 {
 	_putchar(terminal, c);
-	_update_cursor_pos(terminal->cursor_x, terminal->cursor_y);
+	_update_cursor_pos(terminal->last_char_pos.x, terminal->last_char_pos.y);
 }
 
 
@@ -16,59 +16,68 @@ void	terminal_putstring(t_terminal *terminal, const char *str)
 
 	for (uint32_t i = 0; i < len; i++)
 		_putchar(terminal, str[i]);
-	_update_cursor_pos(terminal->cursor_x, terminal->cursor_y);
+	_update_cursor_pos(terminal->last_char_pos.x, terminal->last_char_pos.y);
 }
 
 
 
 static void	_putchar(t_terminal *terminal, const char c)
 {
-	uint32_t	char_id = (terminal->cursor_x + terminal->cursor_y * TERMINAL_WIDTH) * 2;
+	const uint32_t	char_id = strlen(terminal->buffer_char);
 
-	if (c == '\b')
+	if (c == '\n') // New line case
 	{
-		if (terminal->cursor_x == 0)
+		// Write char
+		terminal->buffer_char[char_id] = c;
+		terminal->buffer_color[char_id] = terminal->current_color;
+
+		// Update line length
+		terminal->lines_length[terminal->last_char_pos.y]++;
+		// Update last char pos
+		terminal->last_char_pos.x = 0;
+		terminal->last_char_pos.y++;
+	}
+	else if (c == '\t') // Tab case
+	{
+		uint32_t	nb_space = TAB_SIZE - (terminal->last_char_pos.x % TAB_SIZE);
+
+		if (terminal->last_char_pos.x + nb_space > TERMINAL_WIDTH) // Security for avoid tab go onto other line
 			return ;
 
-		terminal->cursor_x--;
-		char_id = (terminal->cursor_x + terminal->cursor_y * TERMINAL_WIDTH) * 2;
-		terminal->addr[char_id] = ' ';
-		terminal->addr[char_id + 1] = terminal->current_color;
-	}
-	else if (c == '\t')
-	{
-		int32_t nb_space = 4 - (terminal->cursor_x % 4);
-
-		for (int32_t i = 0; i < nb_space; i++)
+		// Write chars
+		for (uint32_t i = 0; i < nb_space; i++)
 		{
-			terminal->addr[char_id] = ' ';
-			terminal->addr[char_id + 1] = terminal->current_color;
-			terminal->cursor_x++;
-			if (terminal->cursor_x == TERMINAL_WIDTH)
-				break;
-			char_id = (terminal->cursor_x + terminal->cursor_y * TERMINAL_WIDTH) * 2;
+			terminal->buffer_char[char_id + i] = c;
+			terminal->buffer_color[char_id + i] = terminal->current_color;
 		}
+
+		// Update line length
+		terminal->lines_length[terminal->last_char_pos.y] += nb_space;
+		// Update last char pos
+		terminal->last_char_pos.x += nb_space;
 	}
-	else if (c == '\n')
+	else // Generic case
 	{
-		terminal->addr[char_id] = ' ';
-		terminal->addr[char_id + 1] = terminal->current_color;
-	}
-	else
-	{
-		terminal->addr[char_id] = c;
-		terminal->addr[char_id + 1] = terminal->current_color;
-		terminal->cursor_x++;
+		// Write char
+		terminal->buffer_char[char_id] = c;
+		terminal->buffer_color[char_id] = terminal->current_color;
+
+		// Update line length
+		terminal->lines_length[terminal->last_char_pos.y]++;
+		// Update last char pos
+		terminal->last_char_pos.x++;
 	}
 
-	if (terminal->cursor_x == TERMINAL_WIDTH || c == '\n')
+	// Change line check
+	if (terminal->last_char_pos.x == TERMINAL_WIDTH)
 	{
-		terminal->cursor_x = 0;
-		terminal->cursor_y++;
+		terminal->last_char_pos.x = 0;
+		terminal->last_char_pos.y++;
 	}
-	if (terminal->cursor_y == TERMINAL_HEIGHT)
+	// Scroll check
+	if (terminal->last_char_pos.y == TERMINAL_HEIGHT)
 	{
-		terminal->cursor_y--;
+		terminal->last_char_pos.x = 0;
 		terminal_scroll_up(terminal);
 	}
 }

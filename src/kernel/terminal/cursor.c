@@ -6,8 +6,8 @@ void	ternimal_set_cursor(t_terminal *terminal, uint32_t x, uint32_t y)
 	if (x >= TERMINAL_WIDTH || y >= TERMINAL_HEIGHT)
 		return ;
 
-	terminal->cursor_x = x;
-	terminal->cursor_y = y;
+	terminal->cursor.x = x;
+	terminal->cursor.y = y;
 
 	_update_cursor_pos(x, y);
 }
