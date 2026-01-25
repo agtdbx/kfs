@@ -19,12 +19,10 @@ typedef struct s_position
 typedef struct s_terminal
 {
 	char		*address;
-	char		buffer_char[TERMINAL_WIDTH * TERMINAL_HEIGHT];
-	char		buffer_color[TERMINAL_WIDTH * TERMINAL_HEIGHT];
+	char		buffer_char[TERMINAL_HEIGHT][TERMINAL_WIDTH + 1];
+	char		buffer_color[TERMINAL_HEIGHT][TERMINAL_WIDTH + 1];
 	char		current_color;
-	uint32_t	lines_length[TERMINAL_HEIGHT];
 	t_position	cursor;
-	t_position	last_char_pos;
 }	t_terminal;
 
 // Init
@@ -32,16 +30,21 @@ t_terminal	terminal_init(char base_color);
 
 // Terminal functions
 void	terminal_clear(t_terminal *terminal);
-void	terminal_clear_screen(t_terminal *terminal);
 void	terminal_flush(t_terminal *terminal);
 void	terminal_scroll_up(t_terminal *terminal);
 
 // Write functions
 void	terminal_putchar(t_terminal *terminal, const char c);
 void	terminal_putstring(t_terminal *terminal, const char *str);
+void	write_putchar(t_terminal *terminal, const char c, const char color, bool insert);
+void	write_putstring(t_terminal *terminal, const char *str, const char color, bool insert);
 
 // Cursor functions
-void	ternimal_set_cursor(t_terminal *terminal, uint32_t x, uint32_t y);
+void	terminal_set_cursor(t_terminal *terminal, uint32_t x, uint32_t y);
+void	terminal_cursor_left(t_terminal *terminal);
+void	terminal_cursor_right(t_terminal *terminal);
+void	terminal_cursor_up(t_terminal *terminal);
+void	terminal_cursor_down(t_terminal *terminal);
 void	_update_cursor_pos(uint32_t x, uint32_t y);
 
 

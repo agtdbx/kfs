@@ -23,6 +23,7 @@ void	kmain(void)
 		{
 			if (key_event.type == KEY_PRESS)
 			{
+				// Write characters
 				if (key_event.ascii != '\0')
 				{
 					terminal_putchar(&terminal, key_event.ascii);
@@ -40,6 +41,16 @@ void	kmain(void)
 				}
 				// else if (key_event.key == K_BACKSPACE)
 				// 	terminal_putchar(&terminal, '\b');
+
+				// Move cursor
+				if (key_event.key == K_LEFT)
+					terminal_cursor_left(&terminal);
+				else if (key_event.key == K_RIGHT)
+					terminal_cursor_right(&terminal);
+				else if (key_event.key == K_UP)
+					terminal_cursor_up(&terminal);
+				else if (key_event.key == K_DOWN)
+					terminal_cursor_down(&terminal);
 			}
 		}
 	}
