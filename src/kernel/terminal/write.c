@@ -44,15 +44,16 @@ void	terminal_write_putstring(t_terminal *terminal, const char *str, const char 
 
 void	terminal_remove_char(t_terminal *terminal)
 {
-	if (terminal->cursor.x == 0 && terminal->cursor.y == 0)
+	if (terminal->cursor.x == 0 && terminal->cursor.y == 1)
 		return ;
 
-	terminal->cursor.x--;
-	if (terminal->cursor.x < 0)
+	if (terminal->cursor.x == 0)
 	{
 		terminal->cursor.y--;
 		terminal->cursor.x = line_len(terminal->buffer_char[terminal->cursor.y]);
 	}
+	else
+		terminal->cursor.x--;
 
 	_move_chars_left(terminal, terminal->cursor.x, terminal->cursor.y);
 	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
@@ -71,7 +72,6 @@ static void	_putchar(t_terminal *terminal, const char c, const char color, bool 
 	// If not insert, move all char before
 	if (!insert && c != '\n')
 		_move_chars_right(terminal, terminal->cursor.x, terminal->cursor.y);
-		// TODO: Newline
 
 	if (c == '\n') // New line case
 	{
@@ -114,7 +114,7 @@ static void	_putchar(t_terminal *terminal, const char c, const char color, bool 
 
 static void	_move_chars_right(t_terminal *terminal, uint32_t pos_x, int32_t pos_y)
 {
-	if (pos_x < 0 || pos_x >= TERMINAL_WIDTH || pos_y < 0 || pos_y >= TERMINAL_HEIGHT)
+	if (pos_x >= TERMINAL_WIDTH || pos_y >= TERMINAL_HEIGHT)
 		return ;
 
 	// Save the last char of the line that will be write over
@@ -169,7 +169,7 @@ static void	_move_chars_right(t_terminal *terminal, uint32_t pos_x, int32_t pos_
 
 static void	_move_chars_after_newline(t_terminal *terminal, uint32_t pos_x, int32_t pos_y)
 {
-	if (pos_x < 0 || pos_x >= TERMINAL_WIDTH || pos_y < 0 || pos_y >= TERMINAL_HEIGHT)
+	if (pos_x >= TERMINAL_WIDTH || pos_y >= TERMINAL_HEIGHT)
 		return ;
 
 	// Save the chars after the \n and remove then from char buffer
@@ -187,6 +187,7 @@ static void	_move_chars_after_newline(t_terminal *terminal, uint32_t pos_x, int3
 		terminal->buffer_color[pos_y][x] = terminal->current_color;
 		i++;
 	}
+	terminal->buffer_char[pos_y][pos_x] = '\n';
 
 	// Scroll terminal if needed
 	if (pos_y == TERMINAL_MAX_Y || line_len(terminal->buffer_char[TERMINAL_MAX_Y]) > 0)
@@ -227,13 +228,49 @@ static void	_move_chars_after_newline(t_terminal *terminal, uint32_t pos_x, int3
 
 static void	_move_chars_left(t_terminal *terminal, uint32_t pos_x, int32_t pos_y)
 {
-	if (pos_x < 0 || pos_x >= TERMINAL_WIDTH || pos_y < 0 || pos_y >= TERMINAL_HEIGHT)
+	if (pos_x >= TERMINAL_WIDTH || pos_y >= TERMINAL_HEIGHT)
 		return ;
 
+	// Compute lenght of the line
+	uint32_t line_length = line_len(terminal->buffer_char[pos_y]);
+
 	// Replace char on cursor pos by moving all chars to left
-	for (uint32_t x = pos_x; x < TERMINAL_WIDTH; x++)
+	for (uint32_t x = pos_x; x < line_length + 1; x++)
 	{
 		terminal->buffer_char[pos_y][x] = terminal->buffer_char[pos_y][x + 1];
 		terminal->buffer_color[pos_y][x] = terminal->buffer_color[pos_y][x + 1];
+	}
+
+	// If line_length is smaller than terminal max width, there is an \n. Or if it's the last line, stop here
+	if (pos_y == TERMINAL_MAX_Y || line_length != TERMINAL_WIDTH)
+		return ;
+
+	// Add the first char of the line at the upper one end
+	terminal->buffer_char[pos_y][TERMINAL_MAX_X] = terminal->buffer_char[pos_y + 1][0];
+	terminal->buffer_color[pos_y][TERMINAL_MAX_X] = terminal->buffer_color[pos_y + 1][0];
+
+	pos_y++;
+
+	while (pos_y < TERMINAL_MAX_Y)
+	{
+		// Add the first char of the line at the upper one end
+		terminal->buffer_char[pos_y][TERMINAL_MAX_X] = terminal->buffer_char[pos_y + 1][0];
+		terminal->buffer_color[pos_y][TERMINAL_MAX_X] = terminal->buffer_color[pos_y + 1][0];
+
+		// Compute lenght of the line
+		line_length = line_len(terminal->buffer_char[pos_y]);
+
+		// Move all chars to left
+		for (uint32_t x = 0; x < line_length + 1; x++)
+		{
+			terminal->buffer_char[pos_y][x] = terminal->buffer_char[pos_y][x + 1];
+			terminal->buffer_color[pos_y][x] = terminal->buffer_color[pos_y][x + 1];
+		}
+
+		// If line_length is smaller than terminal max width, there is an \n. Or if it's the last line, stop here
+		if (pos_y == TERMINAL_MAX_Y || line_length != TERMINAL_WIDTH)
+			return ;
+
+		pos_y++;
 	}
 }

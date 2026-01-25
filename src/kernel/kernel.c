@@ -15,7 +15,11 @@ void	kmain(void)
 	t_terminal	*active_terminal = &terminal1;
 	uint8_t		active_terminal_id = 0;
 
-	terminal_putstring(active_terminal, "42");
+	terminal_putstring(active_terminal, "42\n");
+
+	for (int i = 0; i < 300; i++)
+		terminal_putchar(active_terminal, '#');
+
 	terminal_update_topbar(active_terminal);
 	terminal_flush(active_terminal);
 

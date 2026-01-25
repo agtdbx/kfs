@@ -48,6 +48,14 @@ void	terminal_cursor_right(t_terminal *terminal)
 
 	if (terminal->cursor.x > line_length)
 	{
+		// Check if the current line is full, or contains an \n
+		uint32_t line_length = line_len(terminal->buffer_char[terminal->cursor.y]);
+		if (line_length < TERMINAL_WIDTH && terminal->buffer_char[terminal->cursor.y][line_length] != '\n')
+		{
+			terminal->cursor.x--;
+			return ;
+		}
+
 		terminal->cursor.y++;
 		terminal->cursor.x = 0;
 	}
@@ -76,8 +84,13 @@ void	terminal_cursor_down(t_terminal *terminal)
 	if (terminal->cursor.y == TERMINAL_HEIGHT - 1)
 		return ;
 
-	terminal->cursor.y++;
+	// Check if the current line is full, or contains an \n
 	uint32_t line_length = line_len(terminal->buffer_char[terminal->cursor.y]);
+	if (line_length < TERMINAL_WIDTH && terminal->buffer_char[terminal->cursor.y][line_length] != '\n')
+		return ;
+
+	terminal->cursor.y++;
+	line_length = line_len(terminal->buffer_char[terminal->cursor.y]);
 
 	if (terminal->cursor.x > line_length)
 		terminal->cursor.x = line_length;
