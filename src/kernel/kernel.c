@@ -39,11 +39,21 @@ void	kmain(void)
 					terminal_putchar(&terminal, '\t');
 					terminal_flush(&terminal);
 				}
-				// else if (key_event.key == K_BACKSPACE)
-				// 	terminal_putchar(&terminal, '\b');
+
+				// Remove characters
+				else if (key_event.key == K_BACKSPACE)
+				{
+					terminal_remove_char(&terminal);
+					terminal_flush(&terminal);
+				}
+				else if (key_event.key == K_DELETE)
+				{
+					terminal_delete_char(&terminal);
+					terminal_flush(&terminal);
+				}
 
 				// Move cursor
-				if (key_event.key == K_LEFT)
+				else if (key_event.key == K_LEFT)
 					terminal_cursor_left(&terminal);
 				else if (key_event.key == K_RIGHT)
 					terminal_cursor_right(&terminal);

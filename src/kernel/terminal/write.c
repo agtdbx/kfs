@@ -24,19 +24,43 @@ void	terminal_putstring(t_terminal *terminal, const char *str)
 }
 
 
-void	write_putchar(t_terminal *terminal, const char c, const char color, bool insert)
+void	terminal_write_putchar(t_terminal *terminal, const char c, const char color, bool insert)
 {
 	_putchar(terminal, c, color, insert);
 	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
 }
 
 
-void	write_putstring(t_terminal *terminal, const char *str, const char color, bool insert)
+void	terminal_write_putstring(t_terminal *terminal, const char *str, const char color, bool insert)
 {
 	uint32_t	len = strlen(str);
 
 	for (uint32_t i = 0; i < len; i++)
 		_putchar(terminal, str[i], color, insert);
+	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
+}
+
+
+void	terminal_remove_char(t_terminal *terminal)
+{
+	if (terminal->cursor.x == 0 && terminal->cursor.y == 0)
+		return ;
+
+	terminal->cursor.x--;
+	if (terminal->cursor.x < 0)
+	{
+		terminal->cursor.y--;
+		terminal->cursor.x = line_len(terminal->buffer_char[terminal->cursor.y]);
+	}
+
+	_move_chars_left(terminal, terminal->cursor.x, terminal->cursor.y);
+	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
+}
+
+
+void	terminal_delete_char(t_terminal *terminal)
+{
+	_move_chars_left(terminal, terminal->cursor.x, terminal->cursor.y);
 	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
 }
 
@@ -132,10 +156,28 @@ static void	_move_chars_right(t_terminal *terminal, uint32_t pos_x, int32_t pos_
 		// Update y
 		pos_y++;
 	}
+
+	if (pos_y == TERMINAL_HEIGHT && tmp_char != '\0' && tmp_char != '\n')
+	{
+		// Put the remain char on the new line
+		terminal_scroll_up(terminal);
+		terminal->buffer_char[TERMINAL_HEIGHT - 1][0] = tmp_char;
+		terminal->buffer_color[TERMINAL_HEIGHT - 1][0] = tmp_color;
+		if (terminal->cursor.y > 0)
+			terminal->cursor.y--;
+	}
 }
 
 
 static void	_move_chars_left(t_terminal *terminal, uint32_t pos_x, int32_t pos_y)
 {
+	if (pos_x < 0 || pos_x >= TERMINAL_WIDTH || pos_y < 0 || pos_y >= TERMINAL_HEIGHT)
+		return ;
+
 	// Replace char on cursor pos by moving all chars to left
+	for (uint32_t x = pos_x; x < TERMINAL_WIDTH; x++)
+	{
+		terminal->buffer_char[pos_y][x] = terminal->buffer_char[pos_y][x + 1];
+		terminal->buffer_color[pos_y][x] = terminal->buffer_color[pos_y][x + 1];
+	}
 }

@@ -36,8 +36,10 @@ void	terminal_scroll_up(t_terminal *terminal);
 // Write functions
 void	terminal_putchar(t_terminal *terminal, const char c);
 void	terminal_putstring(t_terminal *terminal, const char *str);
-void	write_putchar(t_terminal *terminal, const char c, const char color, bool insert);
-void	write_putstring(t_terminal *terminal, const char *str, const char color, bool insert);
+void	terminal_write_putchar(t_terminal *terminal, const char c, const char color, bool insert);
+void	terminal_write_putstring(t_terminal *terminal, const char *str, const char color, bool insert);
+void	terminal_remove_char(t_terminal *terminal);
+void	terminal_delete_char(t_terminal *terminal);
 
 // Cursor functions
 void	terminal_set_cursor(t_terminal *terminal, uint32_t x, uint32_t y);
