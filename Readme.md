@@ -11,3 +11,8 @@ make
 ```bash
 make run
 ```
+
+## Control
+key combinaison | action          |
+----------------|-----------------|
+L-CTRL + TAB    | Switch terminal |

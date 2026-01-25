@@ -14,19 +14,25 @@ void	terminal_set_cursor(t_terminal *terminal, uint32_t x, uint32_t y)
 }
 
 
+void	terminal_update_cursor(t_terminal *terminal)
+{
+	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
+}
+
+
 void	terminal_cursor_left(t_terminal *terminal)
 {
-	if (terminal->cursor.x == 0 && terminal->cursor.y == 0)
+	if (terminal->cursor.x == 0 && terminal->cursor.y == 1)
 		return ;
 
-	terminal->cursor.x--;
-
-	if (terminal->cursor.x < 0)
+	if (terminal->cursor.x == 0)
 	{
 		terminal->cursor.x = 0;
 		terminal->cursor.y--;
 		terminal->cursor.x = line_len(terminal->buffer_char[terminal->cursor.y]);
 	}
+	else
+		terminal->cursor.x--;
 
 	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
 }
@@ -52,7 +58,7 @@ void	terminal_cursor_right(t_terminal *terminal)
 
 void	terminal_cursor_up(t_terminal *terminal)
 {
-	if (terminal->cursor.y == 0)
+	if (terminal->cursor.y == 1)
 		return ;
 
 	terminal->cursor.y--;

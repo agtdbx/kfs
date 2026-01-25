@@ -30,7 +30,15 @@ typedef enum VGA_BackgroundColor {
 	BG_RED			= 0x4 << 4,
 	BG_MAGENTA		= 0x5 << 4,
 	BG_BROWN		= 0x6 << 4,
-	BG_LIGHT_GRAY	= 0x7 << 4
+	BG_LIGHT_GRAY	= 0x7 << 4,
+	BG_DARK_GRAY	= 0x8 << 4,
+	BG_LIGHT_BLUE	= 0x9 << 4,
+	BG_LIGHT_GREEN	= 0xA << 4,
+	BG_LIGHT_CYAN	= 0xB << 4,
+	BG_LIGHT_RED	= 0xC << 4,
+	BG_LIGHT_MAGENTA= 0xD << 4,
+	BG_YELLOW		= 0xE << 4,
+	BG_WHITE		= 0xF << 4
 }	t_color_bg;
 
 

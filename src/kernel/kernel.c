@@ -10,10 +10,14 @@ void	kmain(void)
 	t_keyboard	keyboard = keyboard_init();
 
 	// Init terminal
-	t_terminal	terminal = terminal_init(create_color(FG_WHITE, BG_BLACK));
+	t_terminal	terminal1 = terminal_init(create_color(FG_WHITE, BG_BLACK), create_color(FG_WHITE, BG_DARK_GRAY));
+	t_terminal	terminal2 = terminal_init(create_color(FG_WHITE, BG_BLACK), create_color(FG_WHITE, BG_DARK_GRAY));
+	t_terminal	*active_terminal = &terminal1;
+	uint8_t		active_terminal_id = 0;
 
-	terminal_putstring(&terminal, "42");
-	terminal_flush(&terminal);
+	terminal_putstring(active_terminal, "42");
+	terminal_update_topbar(active_terminal);
+	terminal_flush(active_terminal);
 
 	// Infinite loop to keep the kernel running
 	t_key_event	key_event;
@@ -25,46 +29,53 @@ void	kmain(void)
 			{
 				// Write characters
 				if (key_event.ascii != '\0')
-				{
-					terminal_putchar(&terminal, key_event.ascii);
-					terminal_flush(&terminal);
-				}
+					terminal_putchar(active_terminal, key_event.ascii);
 				else if (key_event.key == K_ENTER)
-				{
-					terminal_putchar(&terminal, '\n');
-					terminal_flush(&terminal);
-				}
+					terminal_putchar(active_terminal, '\n');
 				else if (key_event.key == K_TAB)
 				{
-					terminal_putchar(&terminal, '\t');
-					terminal_flush(&terminal);
+					if (keyboard.Lctrl)
+					{
+						if (active_terminal_id == 0)
+						{
+							active_terminal_id = 1;
+							active_terminal = &terminal2;
+						}
+						else
+						{
+							active_terminal_id = 0;
+							active_terminal = &terminal1;
+						}
+						terminal_update_cursor(active_terminal);
+					}
+					else
+					{
+						terminal_putchar(active_terminal, '\t');
+					}
 				}
 
 				// Remove characters
 				else if (key_event.key == K_BACKSPACE)
-				{
-					terminal_remove_char(&terminal);
-					terminal_flush(&terminal);
-				}
+					terminal_remove_char(active_terminal);
 				else if (key_event.key == K_DELETE)
-				{
-					terminal_delete_char(&terminal);
-					terminal_flush(&terminal);
-				}
+					terminal_delete_char(active_terminal);
 
 				// Move cursor
 				else if (key_event.key == K_LEFT)
-					terminal_cursor_left(&terminal);
+					terminal_cursor_left(active_terminal);
 				else if (key_event.key == K_RIGHT)
-					terminal_cursor_right(&terminal);
+					terminal_cursor_right(active_terminal);
 				else if (key_event.key == K_UP)
-					terminal_cursor_up(&terminal);
+					terminal_cursor_up(active_terminal);
 				else if (key_event.key == K_DOWN)
-					terminal_cursor_down(&terminal);
+					terminal_cursor_down(active_terminal);
 				else if (key_event.key == K_HOME)
-					terminal_cursor_start(&terminal);
+					terminal_cursor_start(active_terminal);
 				else if (key_event.key == K_END)
-					terminal_cursor_end(&terminal);
+					terminal_cursor_end(active_terminal);
+
+				terminal_update_topbar(active_terminal);
+				terminal_flush(active_terminal);
 			}
 		}
 	}

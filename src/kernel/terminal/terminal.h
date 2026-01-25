@@ -22,16 +22,19 @@ typedef struct s_terminal
 	char		buffer_char[TERMINAL_HEIGHT][TERMINAL_WIDTH + 1];
 	char		buffer_color[TERMINAL_HEIGHT][TERMINAL_WIDTH + 1];
 	char		current_color;
+	char		topbar_color;
+	uint8_t		id;
 	t_position	cursor;
 }	t_terminal;
 
 // Init
-t_terminal	terminal_init(char base_color);
+t_terminal	terminal_init(const char base_color, const char topbar_color);
 
 // Terminal functions
 void	terminal_clear(t_terminal *terminal);
 void	terminal_flush(t_terminal *terminal);
 void	terminal_scroll_up(t_terminal *terminal);
+void	terminal_update_topbar(t_terminal *terminal);
 
 // Write functions
 void	terminal_putchar(t_terminal *terminal, const char c);
@@ -43,6 +46,7 @@ void	terminal_delete_char(t_terminal *terminal);
 
 // Cursor functions
 void	terminal_set_cursor(t_terminal *terminal, uint32_t x, uint32_t y);
+void	terminal_update_cursor(t_terminal *terminal);
 void	terminal_cursor_left(t_terminal *terminal);
 void	terminal_cursor_right(t_terminal *terminal);
 void	terminal_cursor_up(t_terminal *terminal);
