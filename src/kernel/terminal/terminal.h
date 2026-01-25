@@ -45,6 +45,8 @@ void	terminal_cursor_left(t_terminal *terminal);
 void	terminal_cursor_right(t_terminal *terminal);
 void	terminal_cursor_up(t_terminal *terminal);
 void	terminal_cursor_down(t_terminal *terminal);
+void	terminal_cursor_start(t_terminal *terminal);
+void	terminal_cursor_end(t_terminal *terminal);
 void	_update_cursor_pos(uint32_t x, uint32_t y);
 
 

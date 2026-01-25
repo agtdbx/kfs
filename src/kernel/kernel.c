@@ -51,6 +51,10 @@ void	kmain(void)
 					terminal_cursor_up(&terminal);
 				else if (key_event.key == K_DOWN)
 					terminal_cursor_down(&terminal);
+				else if (key_event.key == K_HOME)
+					terminal_cursor_start(&terminal);
+				else if (key_event.key == K_END)
+					terminal_cursor_end(&terminal);
 			}
 		}
 	}

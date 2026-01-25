@@ -79,6 +79,24 @@ void	terminal_cursor_down(t_terminal *terminal)
 }
 
 
+void	terminal_cursor_start(t_terminal *terminal)
+{
+	terminal->cursor.x = 0;
+	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
+}
+
+
+void	terminal_cursor_end(t_terminal *terminal)
+{
+	terminal->cursor.x = strlen(terminal->buffer_char[terminal->cursor.y]);
+
+	if (terminal->cursor.x == TERMINAL_WIDTH)
+		terminal->cursor.x--;
+
+	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
+}
+
+
 void	_update_cursor_pos(uint32_t x, uint32_t y)
 {
 	uint32_t pos = x + y * TERMINAL_WIDTH;
