@@ -70,9 +70,17 @@ void	kmain(void)
 				else if (key_event.key == K_DOWN)
 					terminal_cursor_down(active_terminal);
 				else if (key_event.key == K_HOME)
+				{
+					if (keyboard.Lctrl)
+						active_terminal->cursor.y = 1;
 					terminal_cursor_start(active_terminal);
+				}
 				else if (key_event.key == K_END)
+				{
+					if (keyboard.Lctrl)
+						active_terminal->cursor.y = TERMINAL_HEIGHT - 1;
 					terminal_cursor_end(active_terminal);
+				}
 
 				terminal_update_topbar(active_terminal);
 				terminal_flush(active_terminal);

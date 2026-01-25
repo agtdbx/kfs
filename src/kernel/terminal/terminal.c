@@ -125,19 +125,4 @@ void	terminal_update_topbar(t_terminal *terminal)
 	terminal->buffer_char[0][21] = '0' + ((terminal->cursor.y / 10) % 10);
 	terminal->buffer_char[0][22] = '0'+ (terminal->cursor.y % 10);
 	terminal->buffer_char[0][23] = ')';
-
-	// Write current line length
-	uint32_t	line_len = strlen(terminal->buffer_char[terminal->cursor.y]);
-	terminal->buffer_char[0][30] = 'L';
-	terminal->buffer_char[0][31] = 'i';
-	terminal->buffer_char[0][32] = 'n';
-	terminal->buffer_char[0][33] = 'e';
-	terminal->buffer_char[0][34] = ' ';
-	terminal->buffer_char[0][35] = 'l';
-	terminal->buffer_char[0][36] = 'e';
-	terminal->buffer_char[0][37] = 'n';
-	terminal->buffer_char[0][38] = ':';
-	terminal->buffer_char[0][39] = '0' + ((line_len / 10) % 10);
-	terminal->buffer_char[0][40] = '0' + (line_len % 10);
-
 }

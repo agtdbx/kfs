@@ -9,6 +9,8 @@
 # include "../define.h"
 
 static const uint32_t	TERMINAL_SIZE = TERMINAL_WIDTH * TERMINAL_HEIGHT;
+static const uint32_t	TERMINAL_MAX_X = TERMINAL_WIDTH - 1;
+static const uint32_t	TERMINAL_MAX_Y = TERMINAL_HEIGHT - 1;
 
 typedef struct s_position
 {
