@@ -53,6 +53,9 @@ void	terminal_clear(t_terminal *terminal)
 			terminal->buffer_color[y][x] = terminal->current_color;
 		}
 	}
+	terminal->cursor.x = 0;
+	terminal->cursor.y = 1;
+	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
 }
 
 

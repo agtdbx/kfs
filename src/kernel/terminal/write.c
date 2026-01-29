@@ -181,9 +181,9 @@ static void	_move_chars_after_newline(t_terminal *terminal, uint32_t pos_x, int3
 		return ;
 
 	// Save the chars after the \n and remove then from char buffer
-	char	tmp_chars[TERMINAL_WIDTH] = {0};
-	char	tmp_colors[TERMINAL_WIDTH] = {0};
-
+	char		tmp_chars[TERMINAL_WIDTH] = {0};
+	char		tmp_colors[TERMINAL_WIDTH] = {0};
+	uint32_t	line_length = line_len(terminal->buffer_char[pos_y]);
 	uint32_t	i = 0;
 	for (uint32_t x = pos_x; x < TERMINAL_WIDTH; x++)
 	{
@@ -211,8 +211,8 @@ static void	_move_chars_after_newline(t_terminal *terminal, uint32_t pos_x, int3
 	{
 		for (uint32_t x = 0; x < TERMINAL_WIDTH; x++)
 		{
-			terminal->buffer_char[pos_y][x] = terminal->buffer_char[pos_y - 1][x];
-			terminal->buffer_color[pos_y][x] = terminal->buffer_color[pos_y - 1][x];
+			terminal->buffer_char[y][x] = terminal->buffer_char[y - 1][x];
+			terminal->buffer_color[y][x] = terminal->buffer_color[y - 1][x];
 		}
 	}
 
@@ -226,13 +226,48 @@ static void	_move_chars_after_newline(t_terminal *terminal, uint32_t pos_x, int3
 		i++;
 	}
 	// Clear the remain part of the new line
-	for (uint32_t x = len_tmp; x < TERMINAL_MAX_X; x++)
+	for (uint32_t x = len_tmp; x < TERMINAL_WIDTH; x++)
 	{
 		terminal->buffer_char[pos_y][x] = '\0';
 		terminal->buffer_color[pos_y][x] = terminal->current_color;
 	}
 
-	// TODO: OVERWRITE EXISTING DATA ON NEW LINE
+	// Move char to continue the line
+	while (line_length == TERMINAL_WIDTH && pos_x != 0 && pos_y < TERMINAL_MAX_Y)
+	{
+		// Check if next line isn't empty
+		line_length = line_len(terminal->buffer_char[pos_y + 1]);
+		if (line_length == 0)
+			return ;
+
+		// Compute how many char to move
+		uint32_t	nb_char_to_move = TERMINAL_WIDTH - len_tmp;
+		if (nb_char_to_move > line_length)
+			nb_char_to_move = line_length;
+
+		// Move chars for next line to current one
+		for (uint32_t j = 0; j < nb_char_to_move; j++)
+		{
+			terminal->buffer_char[pos_y][len_tmp + j] = terminal->buffer_char[pos_y + 1][j];
+			terminal->buffer_color[pos_y][len_tmp + j] = terminal->buffer_color[pos_y + 1][j];
+			terminal->buffer_char[pos_y + 1][j] = '\0';
+			terminal->buffer_color[pos_y + 1][j] = terminal->current_color;
+		}
+		pos_y++;
+
+		// Move chars of next line to the left
+		for (uint32_t j = 0; j < nb_char_to_move; j++)
+		{
+			terminal->buffer_char[pos_y][j] = terminal->buffer_char[pos_y][j + nb_char_to_move];
+			terminal->buffer_color[pos_y][j] = terminal->buffer_color[pos_y][j + nb_char_to_move];
+		}
+		// Clear the last part of the new line that where move
+		for (uint32_t x = TERMINAL_WIDTH - nb_char_to_move; x < TERMINAL_WIDTH; x++)
+		{
+			terminal->buffer_char[pos_y][x] = '\0';
+			terminal->buffer_color[pos_y][x] = terminal->current_color;
+		}
+	}
 }
 
 
@@ -308,6 +343,9 @@ static void	_move_chars_remove_newline(t_terminal *terminal, int32_t pos_y)
 	if (nb_char_to_move > nb_chars_bot_line)
 		nb_char_to_move = nb_chars_bot_line;
 
+	if (nb_char_to_move == 0) // If the bottom line is empty, stop here
+		return ;
+
 	// Move chars to current line
 	for (uint32_t i = 0; i < nb_char_to_move; i++)
 	{
@@ -329,5 +367,40 @@ static void	_move_chars_remove_newline(t_terminal *terminal, int32_t pos_y)
 		terminal->buffer_color[pos_y][i] = terminal->current_color;
 	}
 
-	// TODO: REPERCUTION ON NEXT LINE IF NEEDED
+	line_length = line_len(terminal->buffer_char[pos_y]);
+	while (pos_y < TERMINAL_MAX_Y && terminal->buffer_char[pos_y][line_length] != '\n')
+	{
+		// Move bottom line to this one
+		nb_char_to_move = TERMINAL_WIDTH - line_length;
+		nb_chars_bot_line = line_len(terminal->buffer_char[pos_y + 1]);
+
+		if (nb_char_to_move > nb_chars_bot_line)
+			nb_char_to_move = nb_chars_bot_line;
+
+		if (nb_char_to_move == 0) // If the bottom line is empty, stop here
+			return ;
+
+		// Move chars to current line
+		for (uint32_t i = 0; i < nb_char_to_move; i++)
+		{
+			terminal->buffer_char[pos_y][line_length + i] = terminal->buffer_char[pos_y + 1][i];
+			terminal->buffer_color[pos_y][line_length + i] = terminal->buffer_color[pos_y + 1][i];
+		}
+
+		// Move chars in bottom line
+		pos_y++;
+		for (uint32_t i = 0; i < TERMINAL_WIDTH - nb_char_to_move; i++)
+		{
+			terminal->buffer_char[pos_y][i] = terminal->buffer_char[pos_y][i + nb_char_to_move];
+			terminal->buffer_color[pos_y][i] = terminal->buffer_color[pos_y][i + nb_char_to_move];
+		}
+		// And clear the rest of the line
+		for (uint32_t i = TERMINAL_WIDTH - nb_char_to_move; i < TERMINAL_WIDTH; i++)
+		{
+			terminal->buffer_char[pos_y][i] = '\0';
+			terminal->buffer_color[pos_y][i] = terminal->current_color;
+		}
+
+		line_length = line_len(terminal->buffer_char[pos_y]);
+	}
 }

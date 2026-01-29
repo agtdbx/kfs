@@ -18,7 +18,12 @@ void	kmain(void)
 	terminal_putstring(active_terminal, "42\n");
 
 	for (int i = 0; i < 300; i++)
-		terminal_putchar(active_terminal, '#');
+	{
+		if ((i % 80) == 79)
+			terminal_putchar(active_terminal, 'a');
+		else
+			terminal_putchar(active_terminal, '#');
+	}
 
 	terminal_update_topbar(active_terminal);
 	terminal_flush(active_terminal);
@@ -62,7 +67,12 @@ void	kmain(void)
 				else if (key_event.key == K_BACKSPACE)
 					terminal_remove_char(active_terminal);
 				else if (key_event.key == K_DELETE)
-					terminal_delete_char(active_terminal);
+				{
+					if (keyboard.Lctrl)
+						terminal_clear(active_terminal);
+					else
+						terminal_delete_char(active_terminal);
+				}
 
 				// Move cursor
 				else if (key_event.key == K_LEFT)
@@ -82,7 +92,10 @@ void	kmain(void)
 				else if (key_event.key == K_END)
 				{
 					if (keyboard.Lctrl)
-						active_terminal->cursor.y = TERMINAL_HEIGHT - 1;
+					{
+						for (uint32_t y = active_terminal->cursor.y; y < TERMINAL_MAX_Y; y++)
+							terminal_cursor_down(active_terminal);
+					}
 					terminal_cursor_end(active_terminal);
 				}
 
