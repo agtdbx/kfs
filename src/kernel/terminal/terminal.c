@@ -1,5 +1,6 @@
 #include "terminal.h"
 #include "../libs/libstr.h"
+#include "../printk/printk.h"
 
 static	uint8_t	terminal_count = 0;
 
@@ -106,26 +107,29 @@ void	terminal_scroll_up(t_terminal *terminal)
 
 void	terminal_update_topbar(t_terminal *terminal)
 {
-	// Write terminal id
-	terminal->buffer_char[0][0] = 'I';
-	terminal->buffer_char[0][1] = 'd';
-	terminal->buffer_char[0][2] = ':';
-	terminal->buffer_char[0][3] = '0' + ((terminal->id / 10) % 10);
-	terminal->buffer_char[0][4] = '0' + (terminal->id % 10);
+	// Save current cursor position
+	uint32_t	cursor_x = terminal->cursor.x;
+	uint32_t	cursor_y = terminal->cursor.y;
+	char		current_color = terminal->current_color;
 
-	// Write cursor position
-	terminal->buffer_char[0][10] = 'C';
-	terminal->buffer_char[0][11] = 'u';
-	terminal->buffer_char[0][12] = 'r';
-	terminal->buffer_char[0][13] = 's';
-	terminal->buffer_char[0][14] = 'o';
-	terminal->buffer_char[0][15] = 'r';
-	terminal->buffer_char[0][16] = ':';
-	terminal->buffer_char[0][17] = '(';
-	terminal->buffer_char[0][18] = '0' + ((terminal->cursor.x / 10) % 10);
-	terminal->buffer_char[0][19] = '0' + (terminal->cursor.x % 10);
-	terminal->buffer_char[0][20] = ',';
-	terminal->buffer_char[0][21] = '0' + ((terminal->cursor.y / 10) % 10);
-	terminal->buffer_char[0][22] = '0'+ (terminal->cursor.y % 10);
-	terminal->buffer_char[0][23] = ')';
+	// Move cursor to terminal topbar
+	terminal->cursor.x = 0;
+	terminal->cursor.y = 0;
+	terminal->current_color = terminal->topbar_color;
+
+	// Clear topbar
+	for (uint32_t x = 0; x < TERMINAL_WIDTH; x++)
+	{
+		terminal->buffer_char[0][x] = '\0';
+		terminal->buffer_color[0][x] = terminal->topbar_color;
+	}
+
+	// Write terminal topbar
+	printk(terminal, "Id:%u  Cursor:(%u,%u)", terminal->id, cursor_x, cursor_y);
+
+	// Relace cursor to previous position
+	terminal->cursor.x = cursor_x;
+	terminal->cursor.y = cursor_y;
+	terminal->current_color = current_color;
+	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
 }

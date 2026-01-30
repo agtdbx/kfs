@@ -16,9 +16,7 @@ void	kmain(void)
 	t_terminal	*active_terminal = &terminal1;
 	uint8_t		active_terminal_id = 0;
 
-	// printk(active_terminal, "%i\n", 42);
-	// printk(active_terminal, "'%c'\n", 'D');
-	printk(active_terminal, "str is \"%s\"\n", "Hello kernel");
+	printk(active_terminal, "%i\n", 42);
 
 	for (int i = 0; i < 300; i++)
 	{
