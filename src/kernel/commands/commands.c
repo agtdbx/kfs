@@ -18,11 +18,6 @@ void	parse_execute_command(t_terminal *terminal)
 	get_command_input(terminal, command_buffer);
 	command_name_length = get_command_name(terminal, command_buffer, command_name);
 
-	printk(terminal, " PROMPT is (%u,%u) -> (%u,%u) ; CMD |%s| ; ",
-		terminal->prompt_end_pos.x, terminal->prompt_end_pos.y,
-		terminal->cursor.x, terminal->cursor.y,
-		command_buffer);
-
 	// Empty enter
 	if (command_name_length == 0 && strlen(command_buffer) == 0)
 	{
@@ -79,9 +74,9 @@ static void	get_command_input(t_terminal *terminal, char *command_buffer)
 	uint32_t	i = 0;
 
 	// Get the command input
-	while (y < TERMINAL_MAX_Y)
+	while (y < TERMINAL_HEIGHT)
 	{
-		while (x < TERMINAL_MAX_X)
+		while (x < TERMINAL_WIDTH)
 		{
 			command_buffer[i] = terminal->buffer_char[y][x];
 			x++;
