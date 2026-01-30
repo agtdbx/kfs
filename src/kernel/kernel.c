@@ -5,28 +5,21 @@
 #include "inputs/keyboard.h"
 #include "printk/printk.h"
 
+#define NB_TERMINALS 2
+
 void	kmain(void)
 {
 	//Init keyboard
 	t_keyboard	keyboard = keyboard_init();
 
-	// Init terminal
-	t_terminal	terminal1 = terminal_init(create_color(FG_WHITE, BG_BLACK), create_color(FG_WHITE, BG_DARK_GRAY));
-	t_terminal	terminal2 = terminal_init(create_color(FG_WHITE, BG_BLACK), create_color(FG_WHITE, BG_DARK_GRAY));
-	t_terminal	*active_terminal = &terminal1;
+	// Init terminals
+	t_terminal	terminals[NB_TERMINALS];
 	uint8_t		active_terminal_id = 0;
 
-	printk(active_terminal, "%i\n", 42);
+	terminals[0] = terminal_init(create_color(FG_WHITE, BG_BLACK), create_color(FG_WHITE, BG_DARK_GRAY), create_color(FG_WHITE, BG_BLACK), "> ");
+	terminals[1] = terminal_init(create_color(FG_WHITE, BG_BLACK), create_color(FG_WHITE, BG_DARK_GRAY), create_color(FG_BLUE, BG_BLACK), "kfs@prompt: ");
 
-	for (int i = 0; i < 300; i++)
-	{
-		if ((i % 80) == 79)
-			terminal_putchar(active_terminal, 'a');
-		else
-			terminal_putchar(active_terminal, '#');
-	}
-
-	terminal_update_topbar(active_terminal);
+	t_terminal	*active_terminal = &terminals[active_terminal_id];
 	terminal_flush(active_terminal);
 
 	// Infinite loop to keep the kernel running
@@ -44,20 +37,16 @@ void	kmain(void)
 					terminal_putchar(active_terminal, '\n');
 				else if (key_event.key == K_TAB)
 				{
-					if (keyboard.Lctrl)
+					if (keyboard.Lctrl) // Switch terminal
 					{
-						if (active_terminal_id == 0)
-						{
-							active_terminal_id = 1;
-							active_terminal = &terminal2;
-						}
-						else
-						{
+						active_terminal_id++;
+						if (active_terminal_id == NB_TERMINALS)
 							active_terminal_id = 0;
-							active_terminal = &terminal1;
-						}
+						active_terminal = &terminals[active_terminal_id];
 						terminal_update_cursor(active_terminal);
 					}
+					else if (keyboard.Lshift) // Swicth mode
+						active_terminal->mode = !active_terminal->mode;
 					else
 					{
 						terminal_putchar(active_terminal, '\t');

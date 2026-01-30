@@ -2,10 +2,16 @@
 #include "../libs/libstr.h"
 #include "../printk/printk.h"
 
-static	uint8_t	terminal_count = 0;
+static const char	*modes_texts[2] = {"terminal", "text"};
 
-t_terminal	terminal_init(const char base_color, const char topbar_color)
+t_terminal	terminal_init(
+				const char base_color,
+				const char topbar_color,
+				const char prompt_color,
+				const char* prompt)
 {
+	static uint8_t	terminal_count = 0;
+
 	t_terminal	terminal;
 
 	// Set terminal address
@@ -29,16 +35,32 @@ t_terminal	terminal_init(const char base_color, const char topbar_color)
 	// Set colors
 	terminal.current_color = base_color;
 	terminal.topbar_color = topbar_color;
+	terminal.prompt_color = prompt_color;
 
 	// Set terminal id
 	terminal.id = terminal_count;
 	terminal_count++;
 
+	// Init prompt
+	terminal.prompt_length = strlen(prompt);
+
+	for (uint32_t i = 0; i < terminal.prompt_length; i++)
+		terminal.prompt[i] = prompt[i];
+	for (uint32_t i = terminal.prompt_length; i < TERMINAL_WIDTH; i++)
+		terminal.prompt[i] = '\0';
+
 	// Init positions
 	terminal.cursor.x = 0;
 	terminal.cursor.y = 1;
+	terminal.prompt_end_pos.x = 0;
+	terminal.prompt_end_pos.y = 1;
 
+	// Set mode
+	terminal.mode = MODE_TERMINAL;
+
+	// Write base of terminal
 	terminal_update_topbar(&terminal);
+	terminal_write_prompt(&terminal);
 
 	return (terminal);
 }
@@ -84,6 +106,7 @@ void	terminal_flush(t_terminal *terminal)
 			terminal->address[char_addr + 1] = terminal->buffer_color[y][x];
 		}
 	}
+	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
 }
 
 
@@ -125,11 +148,19 @@ void	terminal_update_topbar(t_terminal *terminal)
 	}
 
 	// Write terminal topbar
-	printk(terminal, "Id:%u  Cursor:(%u,%u)", terminal->id, cursor_x, cursor_y);
+	printk(terminal, "42 kfs ! | Id:%u | Cursor:(%u,%u) | Mode %s", terminal->id, cursor_x, cursor_y, modes_texts[terminal->mode]);
 
 	// Relace cursor to previous position
 	terminal->cursor.x = cursor_x;
 	terminal->cursor.y = cursor_y;
 	terminal->current_color = current_color;
 	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
+}
+
+
+void	terminal_write_prompt(t_terminal *terminal)
+{
+	terminal_write_string(terminal, terminal->prompt, terminal->prompt_color, false);
+	terminal->prompt_end_pos.x = terminal->cursor.x;
+	terminal->prompt_end_pos.y = terminal->cursor.y;
 }

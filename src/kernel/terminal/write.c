@@ -26,14 +26,14 @@ void	terminal_putstring(t_terminal *terminal, const char *str)
 }
 
 
-void	terminal_write_putchar(t_terminal *terminal, const char c, const char color, bool insert)
+void	terminal_write_char(t_terminal *terminal, const char c, const char color, bool insert)
 {
 	_putchar(terminal, c, color, insert);
 	_update_cursor_pos(terminal->cursor.x, terminal->cursor.y);
 }
 
 
-void	terminal_write_putstring(t_terminal *terminal, const char *str, const char color, bool insert)
+void	terminal_write_string(t_terminal *terminal, const char *str, const char color, bool insert)
 {
 	uint32_t	len = strlen(str);
 
