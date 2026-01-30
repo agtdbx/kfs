@@ -3,6 +3,7 @@
 #include "libs/libstr.h"
 #include "terminal/terminal.h"
 #include "inputs/keyboard.h"
+#include "printk/printk.h"
 
 void	kmain(void)
 {
@@ -15,7 +16,9 @@ void	kmain(void)
 	t_terminal	*active_terminal = &terminal1;
 	uint8_t		active_terminal_id = 0;
 
-	terminal_putstring(active_terminal, "42\n");
+	// printk(active_terminal, "%i\n", 42);
+	// printk(active_terminal, "'%c'\n", 'D');
+	printk(active_terminal, "str is \"%s\"\n", "Hello kernel");
 
 	for (int i = 0; i < 300; i++)
 	{
