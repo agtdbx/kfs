@@ -58,6 +58,7 @@ void	terminal_putchar(t_terminal *terminal, const char c);
 void	terminal_putstring(t_terminal *terminal, const char *str);
 void	terminal_write_char(t_terminal *terminal, const char c, const char color, bool insert);
 void	terminal_write_string(t_terminal *terminal, const char *str, const char color, bool insert);
+// Delete functions
 void	terminal_remove_char(t_terminal *terminal);
 void	terminal_delete_char(t_terminal *terminal);
 

@@ -25,6 +25,11 @@ void	terminal_cursor_left(t_terminal *terminal)
 	if (terminal->cursor.x == 0 && terminal->cursor.y == 1)
 		return ;
 
+	if (terminal->mode == MODE_TERMINAL
+		&& terminal->cursor.x == terminal->prompt_end_pos.x
+		&& terminal->cursor.y == terminal->prompt_end_pos.y)
+		return ;
+
 	if (terminal->cursor.x == 0)
 	{
 		uint32_t previous_line_length = line_len(terminal->buffer_char[terminal->cursor.y - 1]);

@@ -16,7 +16,6 @@ uint32_t	strlen(const char *str)
 }
 
 
-
 uint32_t	line_len(const char *line)
 {
 	if (!line)
@@ -28,4 +27,27 @@ uint32_t	line_len(const char *line)
 		len++;
 
 	return (len);
+}
+
+
+bool	is_whitespace(const char c)
+{
+	return (c <= 32 || c > 127);
+}
+
+
+bool	is_str_equals(const char *str1, const char *str2)
+{
+	uint32_t str1_length = strlen(str1);
+
+	if (str1_length != strlen(str2))
+		return (false);
+
+	for (uint32_t i = 0; i < str1_length; i++)
+	{
+		if (str1[i] != str2[i])
+			return (false);
+	}
+
+	return (true);
 }

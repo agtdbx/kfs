@@ -4,6 +4,7 @@
 #include "terminal/terminal.h"
 #include "inputs/keyboard.h"
 #include "printk/printk.h"
+#include "commands/commands.h"
 
 #define NB_TERMINALS 2
 
@@ -17,7 +18,7 @@ void	kmain(void)
 	uint8_t		active_terminal_id = 0;
 
 	terminals[0] = terminal_init(create_color(FG_WHITE, BG_BLACK), create_color(FG_WHITE, BG_DARK_GRAY), create_color(FG_WHITE, BG_BLACK), "> ");
-	terminals[1] = terminal_init(create_color(FG_WHITE, BG_BLACK), create_color(FG_WHITE, BG_DARK_GRAY), create_color(FG_BLUE, BG_BLACK), "kfs@prompt: ");
+	terminals[1] = terminal_init(create_color(FG_WHITE, BG_BLACK), create_color(FG_WHITE, BG_DARK_GRAY), create_color(FG_GREEN, BG_BLACK), "kfs@prompt: ");
 
 	t_terminal	*active_terminal = &terminals[active_terminal_id];
 	terminal_flush(active_terminal);
@@ -34,7 +35,15 @@ void	kmain(void)
 				if (key_event.ascii != '\0')
 					terminal_putchar(active_terminal, key_event.ascii);
 				else if (key_event.key == K_ENTER)
-					terminal_putchar(active_terminal, '\n');
+				{
+					if (active_terminal->mode == MODE_TERMINAL)
+					{
+						terminal_cursor_end(active_terminal);
+						parse_execute_command(active_terminal);
+					}
+					else
+						terminal_putchar(active_terminal, '\n');
+				}
 				else if (key_event.key == K_TAB)
 				{
 					if (keyboard.Lctrl) // Switch terminal
@@ -59,7 +68,11 @@ void	kmain(void)
 				else if (key_event.key == K_DELETE)
 				{
 					if (keyboard.Lctrl)
+					{
 						terminal_clear(active_terminal);
+						if (active_terminal->mode == MODE_TERMINAL)
+							terminal_write_prompt(active_terminal);
+					}
 					else
 						terminal_delete_char(active_terminal);
 				}
