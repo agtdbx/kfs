@@ -10,8 +10,6 @@ t_terminal	terminal_init(
 				const char prompt_color,
 				const char* prompt)
 {
-	static uint8_t	terminal_count = 0;
-
 	t_terminal	terminal;
 
 	// Set terminal address
@@ -36,10 +34,6 @@ t_terminal	terminal_init(
 	terminal.current_color = base_color;
 	terminal.topbar_color = topbar_color;
 	terminal.prompt_color = prompt_color;
-
-	// Set terminal id
-	terminal.id = terminal_count;
-	terminal_count++;
 
 	// Init prompt
 	terminal.prompt_length = strlen(prompt);
@@ -148,7 +142,7 @@ void	terminal_update_topbar(t_terminal *terminal)
 	}
 
 	// Write terminal topbar
-	printk(terminal, "42 kfs ! | Id:%u | Cursor:(%u,%u) | Mode %s", terminal->id, cursor_x, cursor_y, modes_texts[terminal->mode]);
+	printk(terminal, "42 kfs ! | Cursor:(%u,%u) | Mode %s", cursor_x, cursor_y, modes_texts[terminal->mode]);
 
 	// Relace cursor to previous position
 	terminal->cursor.x = cursor_x;

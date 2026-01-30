@@ -33,7 +33,6 @@ typedef struct s_terminal
 	char		current_color;
 	char		topbar_color;
 	char		prompt_color;
-	uint8_t		id;
 	uint32_t	prompt_length;
 	t_position	prompt_end_pos;
 	t_position	cursor;

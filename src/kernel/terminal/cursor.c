@@ -27,9 +27,14 @@ void	terminal_cursor_left(t_terminal *terminal)
 
 	if (terminal->cursor.x == 0)
 	{
+		uint32_t previous_line_length = line_len(terminal->buffer_char[terminal->cursor.y - 1]);
+
+		if (terminal->mode == MODE_TERMINAL && previous_line_length < TERMINAL_WIDTH)
+			return ;
+
 		terminal->cursor.x = 0;
 		terminal->cursor.y--;
-		terminal->cursor.x = line_len(terminal->buffer_char[terminal->cursor.y]);
+		terminal->cursor.x = previous_line_length - 1;
 	}
 	else
 		terminal->cursor.x--;
@@ -69,8 +74,12 @@ void	terminal_cursor_up(t_terminal *terminal)
 	if (terminal->cursor.y == 1)
 		return ;
 
+	uint32_t line_length = line_len(terminal->buffer_char[terminal->cursor.y - 1]);
+
+	if (terminal->mode == MODE_TERMINAL && line_length < TERMINAL_WIDTH)
+		return ;
+
 	terminal->cursor.y--;
-	uint32_t line_length = line_len(terminal->buffer_char[terminal->cursor.y]);
 
 	if (terminal->cursor.x > line_length)
 		terminal->cursor.x = line_length;
