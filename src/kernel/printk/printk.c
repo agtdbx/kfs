@@ -4,6 +4,7 @@ static const char	*NUMBER_BASE = "0123456789abcdef";
 
 static void	print_number(t_terminal *terminal, int32_t number, int32_t base);
 static void	print_unsigned_number(t_terminal *terminal, uint32_t number, uint32_t base);
+static void	print_address(t_terminal *terminal, uint32_t number);
 
 void	printk(t_terminal *terminal, const char *str, ...)
 {
@@ -20,19 +21,21 @@ void	printk(t_terminal *terminal, const char *str, ...)
 		{
 			i++;
 			if (str[i] == 'c') // Char
-				terminal_putchar(terminal, va_arg(args, int));
+				terminal_putchar(terminal, (char)va_arg(args, int32_t));
 			else if (str[i] == 's') // String
-				terminal_putstring(terminal, (char *)va_arg(args, int *));
+				terminal_putstring(terminal, (char *)va_arg(args, int32_t *));
 			else if (str[i] == 'i') // Integer
-				print_number(terminal, va_arg(args, int), 10);
+				print_number(terminal, va_arg(args, int32_t), 10);
 			else if (str[i] == 'u') // Unsigned integer
-				print_number(terminal, va_arg(args, unsigned int), 10);
+				print_number(terminal, va_arg(args, uint32_t), 10);
 			else if (str[i] == 'h') // Integer in base 16
-				print_number(terminal, va_arg(args, int), 16);
+				print_unsigned_number(terminal, va_arg(args, uint32_t), 16);
 			else if (str[i] == 'o') // Integer in base 8
-				print_number(terminal, va_arg(args, int), 8);
+				print_unsigned_number(terminal, va_arg(args, uint32_t), 8);
 			else if (str[i] == 'b') // Interger in base 2
-				print_number(terminal, va_arg(args, int), 2);
+				print_unsigned_number(terminal, va_arg(args, uint32_t), 2);
+			else if (str[i] == 'p') // Address
+				print_address(terminal, va_arg(args, int));
 			else
 			{
 				terminal_putchar(terminal, '%');
@@ -86,4 +89,24 @@ static void	print_unsigned_number(t_terminal *terminal, uint32_t number, uint32_
 		print_unsigned_number(terminal, number / base, base);
 
 	terminal_putchar(terminal, NUMBER_BASE[number % base]);
+}
+
+
+static void	print_address(t_terminal *terminal, uint32_t number)
+{
+	terminal_putstring(terminal, "0x");
+
+	uint32_t	number_size = 1;
+	uint32_t	number_tmp = number;
+
+	while (number_tmp >= 16)
+	{
+		number_size++;
+		number_tmp /= 16;
+	}
+
+	for (uint32_t i = number_size; i < 8; i++)
+		terminal_putchar(terminal, '0');
+
+	print_unsigned_number(terminal, number, 16);
 }

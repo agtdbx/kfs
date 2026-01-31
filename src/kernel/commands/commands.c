@@ -30,10 +30,12 @@ void	parse_execute_command(t_terminal *terminal)
 	terminal_putchar(terminal, '\n');
 
 	// Execute command
-	if (is_str_equals("echo", command_name))
-		command_echo(terminal, command_buffer + command_name_length);
-	else if (is_str_equals("clear", command_name))
+	if (is_str_equals("clear", command_name))
 		command_clear(terminal, command_buffer + command_name_length);
+	else if (is_str_equals("echo", command_name))
+		command_echo(terminal, command_buffer + command_name_length);
+	else if (is_str_equals("gdt", command_name))
+		command_gdt(terminal, command_buffer + command_name_length);
 	else
 		printk(terminal, "kfs: command '%s' is not found\n", command_name);
 

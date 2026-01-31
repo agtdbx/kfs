@@ -32,6 +32,7 @@ KERNEL_FILES	:=	kernel.c \
 					commands/clear.c \
 					commands/commands.c \
 					commands/echo.c \
+					commands/gdt.c \
 					inputs/keyboard.c \
 					libs/io.c \
 					libs/libstr.c \
