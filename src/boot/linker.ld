@@ -3,11 +3,23 @@ ENTRY (_start) /* label to load in booyloader */
 /* define of sections */
 SECTIONS
 {
+	/* multiboot section begin at 0x100 */
+	/* section for boot, read-only */
+	. = 0x100;
+	.multiboot : {
+		*(.multiboot)
+	}
+
+	/* put gdt section at 0x800 */
+	. = 0x800;
+	.gdt : {
+		KEEP(*(.gdt))
+	}
+
 	/* text section begin at 0x100000 */
 	/* section for executable, read-only */
 	. = 0x100000;
 	.text : {
-		*(.multiboot)
 		*(.text)
 	}
 

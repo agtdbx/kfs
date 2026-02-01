@@ -1,7 +1,7 @@
 {
   inputs = {
     # Link for src file to downloads
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -16,25 +16,25 @@
 
         # Define all dependencies to install into dev shell
         devShells.default = pkgs.mkShell {
-          shell = pkgs.bash; # Define the default shell
+          shell = pkgs.zsh; # Define the default shell
 
           buildInputs = [
-            pkgs.bash # Install bash for shell
+            pkgs.zsh # Install zsh for shell
             pkgs.mtools # Utilities for working with images
             pkgs.qemu # Emulator that run my kernel
             pkgs.grub2 # Bootloader
             pkgs.wget # Download file from web
             pkgs.unzip # Unzip
             pkgs.nasm # 'Compiler' for asm
-            pkgs.gcc # C compiler
-            # pkgs.pkgsCross.i686-embedded.buildPackages.gcc # C compiler (take a lot of time)
-            pkgs.binutils # Linker ld
+            # pkgs.gcc # C compiler
+            pkgs.pkgsCross.i686-embedded.buildPackages.gcc # C compiler (take a lot of time)
+            #pkgs.binutils # Linker ld
             pkgs.xorriso
           ];
 
           # Start my dev shell after install
           shellHook = ''
-            exec bash
+            exec zsh
           '';
         };
       });
