@@ -63,7 +63,7 @@ Prérequis : **nix, Make**
 git clone https://github.com/agtdbx/kfs.git
 cd kfs
 
-# Activé l'environement de dev
+# Activer l'environnement de développement
 nix develop --extra-experimental-features nix-command --extra-experimental-features flakes
 
 # Compiler le kernel
